@@ -127,3 +127,7 @@ ILLEGAL_APPEND_CONTROL_VALUE = ("Line {line}: "
 
 UNMODIFIABLE_COLUMN = ("Line {line}: Column '{column_name}' can not be "
                        "modified. The value will be ignored.")
+
+SINGLE_AUDIT_RESTRICTION = (u"Line {line}: You can not map {mapped_type} to "
+                            u"{object_type}, because this {object_type} is "
+                            u"already mapped to an {mapped_type}")
