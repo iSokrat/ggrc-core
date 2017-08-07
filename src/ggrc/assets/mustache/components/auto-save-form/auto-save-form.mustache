@@ -7,7 +7,7 @@
   {{#each fields}}
     <div class="field-wrapper flex-size-1">
       <form-validation-icon {validation}="validation"></form-validation-icon>
-      <div class="field__title form-field__title">
+      <div class="field__title field_row">
         <label class="field__title-text" for="form-field-{{id}}">{{title}}</label>
         {{#if required}}
           <span class="field__title-required"><i class="fa fa-asterisk"></i></span>
@@ -23,6 +23,7 @@
           {field-id}="id"
           {placeholder}="placeholder"
           {options}="options"
+          {validation}="validation"
           (value-changed)="fieldValueChanged(%event, %context)"
           class="form-field__content"
         ></auto-save-form-field>
@@ -38,6 +39,10 @@
                 <button class="btn btn-small btn-link btn-link-nopadding" ($click)="showRequiredInfoModal(%event, %context)">Add required info</button>
             </div>
       {{/if}}
+      <form-validation-text
+        {toggle}="validation"
+        class="field_row">
+      </form-validation-text>
     </div>
   {{/each}}
 </div>

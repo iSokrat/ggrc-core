@@ -29,9 +29,16 @@
             setValue(newValue);
             this.attr('_value', newValue);
           }
+        },
+        highlightClass: {
+          get: function () {
+            var hClass = 'input-required';
+            return !this.attr('valid') ? hClass : '';
+          }
         }
       },
       fieldId: null,
+      valid: true,
       placeholder: '',
       valueChanged: function (newValue) {
         this.dispatch({

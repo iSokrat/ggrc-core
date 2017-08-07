@@ -191,6 +191,7 @@ dashboard-js-files:
   - components/object-list/object-list.js
   - components/form/form-required-check.js
   - components/form/form-validation-icon.js
+  - components/form/form-validation-text.js
   - components/ca-object/ca-object-modal-content.js
   - components/related-objects/related-objects.js
   - components/reusable-objects/reusable-objects-list.js
@@ -537,6 +538,7 @@ dashboard-js-template-files:
   - components/auto-save-form/field-views/checkbox-form-field-view.mustache
   - components/auto-save-form/field-views/date-form-field-view.mustache
   - components/auto-save-form/field-views/person-form-field-view.mustache
+  - components/form/form-validation-text.mustache
   - components/object-tasks/object-tasks.mustache
   - components/advanced-search/advanced-search-filter-container.mustache
   - components/advanced-search/advanced-search-filter-attribute.mustache

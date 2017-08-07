@@ -15,6 +15,17 @@
       define: {
         disabled: {
           type: 'htmlbool'
+        },
+        isValid: {
+          get: function () {
+            var isValid = false;
+
+            if (this.attr('validation.show')) {
+              isValid = this.attr('validation.valid');
+            }
+
+            return isValid;
+          }
         }
       },
       type: null,
@@ -22,6 +33,7 @@
       fieldId: null,
       placeholder: '',
       options: [],
+      validation: {},
       fieldValueChanged: function (e, scope) {
         this.dispatch({
           type: 'valueChanged',
