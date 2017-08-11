@@ -87,7 +87,7 @@
       ['Contract', 'Policy', 'Regulation', 'Standard']),
     Process: filteredTypes,
     Product: filteredTypes,
-    Program: _.difference(filteredTypes, ['Program']).concat(['Issue']),
+    Program: _.difference(filteredTypes, ['Program']),
     Project: _.difference(filteredTypes, ['Issue']),
     Regulation: _.difference(filteredTypes,
       ['Contract', 'Policy', 'Regulation', 'Standard']),
