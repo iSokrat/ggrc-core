@@ -75,7 +75,7 @@
     Contract: _.difference(filteredTypes,
       ['Contract', 'Policy', 'Regulation', 'Standard']),
     Control: filteredTypes,
-    Assessment: snapshotWidgetsConfig.concat('Audit').sort(),
+    Assessment: snapshotWidgetsConfig.concat(['Audit', 'Issue']).sort(),
     AssessmentTemplate: ['Audit'],
     DataAsset: filteredTypes,
     Facility: filteredTypes,
