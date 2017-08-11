@@ -78,7 +78,7 @@
     AssessmentTemplate: ['Audit'],
     DataAsset: filteredTypes,
     Facility: filteredTypes,
-    Issue: _(filteredTypes).difference(['Project']).value(),
+    Issue: _(filteredTypes).difference(['Project']).sort().value(),
     Market: filteredTypes,
     Objective: filteredTypes,
     OrgGroup: filteredTypes,
