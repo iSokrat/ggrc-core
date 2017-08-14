@@ -362,7 +362,6 @@
 
       // NOTE: the names in every type pair must be sorted alphabetically!
       var FORBIDDEN = Object.freeze({
-        'audit issue': true,
         'audit program': true,
         'audit request': true,
         'program riskassessment': true,
