@@ -60,7 +60,8 @@
   var auditInclusion = [
     'Assessment',
     'Person',
-    'Program'
+    'Program',
+    'Issue'
   ];
   var baseWidgetsByType;
 
