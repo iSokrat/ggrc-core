@@ -39,8 +39,15 @@
       },
       close: function (el, ev) {
         var onClose = Mustache.resolve(this.onClose);
+        this._removeTooltip(el);
         ev.preventDefault();
         onClose();
+      },
+      _removeTooltip: function (el) {
+        $(el)
+          .find('[rel="tooltip"]')
+          .data('tooltip')
+          .hide();
       }
     }
   }, true);
