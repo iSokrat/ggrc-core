@@ -2931,4 +2931,28 @@ Example:
           return options.fn(options.contexts.add({hasRole: hasRole}));
         }, hasRoleForContextDfd);
     });
+
+    Mustache.registerHelper('switchConfigForMapper',
+    function (type, config, options) {
+      debugger;
+      var mapType = Mustache.resolve(type);
+      var vm = Mustache.resolve(options.hash.viewModel);
+      var config = Mustache.resolve(config) || {};
+      var special = _.result(
+        _.find(
+          config.special,
+          function (special) {
+            return _.contains(special.types, mapType);
+          }),
+        'config'
+      );
+
+      if (!_.isEmpty(special)) {
+        vm.updateConfig(special);
+      } else {
+        vm.updateConfig(config.general)
+      }
+
+      return options.fn(options.contexts);
+    });
 })(this, jQuery, can);

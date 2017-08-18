@@ -43,6 +43,7 @@
     openMapper: function (data, disableMapper, btn) {
       var self = this;
       var isSearch = /unified-search/ig.test(data.toggle);
+      var specialConfigs;
 
       if (disableMapper) {
         return;
@@ -52,19 +53,42 @@
         throw new Error(OBJECT_REQUIRED_MESSAGE);
       }
 
+      /**
+       * Special configs provide an opportunity to set special config
+       * for certain types.
+       *
+       * specialConfigs = [
+       *    {
+       *       types: [String...],
+       *       config: plain object
+       *    },
+       *    ...
+       * ]
+       */
+      specialConfigs = [{
+        types: ['Issue'],
+        // set config like for common objects
+        config: getConfigForCommonObjects(data).generalConfig
+      }];
+
       if (GGRC.Utils.Snapshots
           .isInScopeModel(data.join_object_type) && !isSearch) {
-        openForSnapshots(data);
+        // each object type will be perceived as a snapshot, except types with
+        // special config
+        openForSnapshots(data, specialConfigs);
       } else {
         openForCommonObjects(data, isSearch);
       }
 
-      function openForSnapshots(data) {
-        var config;
+      function openForSnapshots(data, specialConfigs) {
+        var config = getBaseConfig();
         var inScopeObject;
 
+        _.extend(config.generalConfig, {useSnapshots: true});
+        _.extend(config, {specialConfigs: specialConfigs || {}});
+
         if (data.is_new) {
-          config = {
+          _.extend(config.generalConfig, {
             object: data.join_object_type,
             type: data.join_option_type,
             relevantTo: [{
@@ -72,7 +96,7 @@
               type: data.snapshot_scope_type,
               id: data.snapshot_scope_id
             }]
-          };
+          });
           self.launch(btn, can.extend(config, data));
           return;
         }
@@ -95,7 +119,7 @@
             return;
           }
 
-          config = {
+          _.extend(config.generalConfig, {
             object: data.join_object_type,
             'join-object-id': data.join_object_id,
             type: data.join_option_type,
@@ -105,23 +129,47 @@
               id: scopeObject.id,
               title: scopeObject.title
             }]
-          };
+          });
 
           self.launch(btn, can.extend(config, data));
         });
       }
 
       function openForCommonObjects(data, isSearch) {
-        var config = {
-          object: data.join_object_type,
-          type: data.join_option_type,
-          'join-object-id': data.join_object_id
-        };
+        var config = getConfigForCommonObjects(data);
+
         if (isSearch) {
           self.launch(btn, can.extend(config, data));
         } else {
           self.launch(btn, can.extend(config, data));
         }
+      }
+
+      function getBaseConfig() {
+        return {
+          generalConfig: {
+            useSnapshots: false,
+            object: '',
+            type: '',
+            'join-object-id': null,
+            // if set then each mapped object will be relevant to
+            // relevantTo object (for example, snapshots relevant to Audit (at 08/2017))
+            relevantTo: null
+          },
+          specialConfigs: []
+        };
+      }
+
+      function getConfigForCommonObjects(data) {
+        var base = getBaseConfig();
+
+        _.extend(base.generalConfig, {
+          object: data.join_object_type,
+          type: data.join_option_type,
+          'join-object-id': data.join_object_id
+        });
+
+        return base;
       }
     }
   }, {

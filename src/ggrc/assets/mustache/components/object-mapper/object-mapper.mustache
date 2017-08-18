@@ -3,6 +3,7 @@
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
 
+{{#switchConfigForMapper type config viewModel=.}}
 <div class="modal-header">
   <a class="modal-dismiss pull-right" href="javascript://" data-dismiss="modal">
     <i class="fa fa-times black"></i>
@@ -20,7 +21,9 @@
   </div>
   {{/if}}
 
+
   <div class="object-controls">
+    {{debugger model}}
     <advanced-search-wrapper
       {model-name}="model.singular"
       {model-display-name}="model.name"
@@ -102,6 +105,7 @@
             {{/each}}
             <advanced-search-mapping-container
               {(items)}="mappingItems"
+              {available-attributes}="availableAttributes"
               {model-name}="modelName">
             </advanced-search-mapping-container>
           </div>
@@ -125,7 +129,7 @@
       base-instance="parentInstance"
       {(is-loading)}="is_loading"
       object="object"
-      type="type"
+      {type}="type"
       selected="selected"
       submit-cbs="submitCbs"
       {^paging.total}="*totalObjects"
@@ -161,3 +165,4 @@
     </div>
   </collapsible-panel>
 </div>
+{{/switchConfigForMapper}}

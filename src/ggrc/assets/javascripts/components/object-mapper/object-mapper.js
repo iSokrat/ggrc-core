@@ -34,13 +34,17 @@
     template: can.view(GGRC.mustache_path +
       '/components/object-mapper/object-mapper.mustache'),
     viewModel: function (attrs, parentViewModel) {
+      var config = {
+        general: parentViewModel.attr('generalConfig'),
+        special: parentViewModel.attr('specialConfigs')
+      };
+
       return GGRC.VM.ObjectOperationsBaseVM.extend({
         join_object_id: attrs.joinObjectId ||
           (GGRC.page_instance() && GGRC.page_instance().id),
         object: attrs.object,
         type: getDefaultType(attrs.type, attrs.object),
-        relevantTo: parentViewModel.attr('relevantTo'),
-        useSnapshots: GGRC.Utils.Snapshots.isInScopeModel(attrs.object),
+        config: config,
         isLoadingOrSaving: function () {
           return this.attr('is_saving') ||
           //  disable changing of object type while loading
@@ -50,6 +54,9 @@
         deferred_to: parentViewModel.attr('deferred_to'),
         deferred_list: [],
         deferred: false,
+        updateConfig: function (config) {
+          this.attr(config);
+        },
         allowedToCreate: function () {
           // Don't allow to create new instances for "In Scope" Objects
           var isInScopeModel =
@@ -64,7 +71,7 @@
           return GGRC.Utils.Snapshots.isSnapshotParent(this.attr('object')) ||
             GGRC.Utils.Snapshots.isSnapshotParent(this.attr('type'));
         }
-      });
+      }).extend(config.general);
     },
 
     events: {
