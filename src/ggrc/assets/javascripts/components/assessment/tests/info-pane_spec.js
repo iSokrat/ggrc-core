@@ -264,7 +264,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
         .returnValue(can.Deferred());
     });
 
-    it('sets "isUpdating{<some type>}" property based on passed capitalized ' +
+    it('sets "isUpdating{<some capitalized type>}" property based on passed ' +
     'type to true before resolving a request', function () {
       var type = 'type';
       var expectedProp = 'isUpdating' + can.capitalize(type);
@@ -302,8 +302,8 @@ describe('GGRC.Components.assessmentInfoPane', function () {
           );
       });
 
-      it('sets "isUpdating{<some type>}" property based on passed ' +
-      'capitalized type to false after request', function (done) {
+      it('sets "isUpdating{<some capitalized type>}" property based on ' +
+      'passed type to false after request', function (done) {
         var type = 'type';
         var expectedProp = 'isUpdating' + can.capitalize(type);
 
@@ -361,6 +361,325 @@ describe('GGRC.Components.assessmentInfoPane', function () {
           expect(result).toEqual(false);
           done();
         });
+      });
+    });
+  });
+
+  describe('loadSnapshots method()', function () {
+    var query;
+    var requestResult;
+
+    beforeEach(function () {
+      query = {};
+      requestResult = can.Deferred().resolve();
+
+      spyOn(viewModel, 'requestQuery').and.returnValue(requestResult);
+      spyOn(viewModel, 'getSnapshotQuery').and.returnValue(query);
+    });
+
+    it('returns result of requestQuery', function () {
+      var result = viewModel.loadSnapshots();
+      expect(result).toBe(requestResult);
+    });
+
+    it('uses query for Snapshots', function () {
+      viewModel.loadSnapshots();
+      expect(viewModel.requestQuery).toHaveBeenCalledWith(query);
+    });
+  });
+
+  describe('loadComments method()', function () {
+    var query;
+    var requestResult;
+
+    beforeEach(function () {
+      query = {};
+      requestResult = can.Deferred().resolve();
+
+      spyOn(viewModel, 'requestQuery').and.returnValue(requestResult);
+      spyOn(viewModel, 'getCommentQuery').and.returnValue(query);
+    });
+
+    it('returns result of requestQuery', function () {
+      var result = viewModel.loadComments();
+      expect(result).toBe(requestResult);
+    });
+
+    it('uses query for Comments and "comments" type', function () {
+      var type = 'comments';
+      viewModel.loadComments();
+      expect(viewModel.requestQuery).toHaveBeenCalledWith(query, type);
+    });
+  });
+
+  describe('loadEvidences method()', function () {
+    var query;
+    var requestResult;
+
+    beforeEach(function () {
+      query = {};
+      requestResult = can.Deferred().resolve();
+
+      spyOn(viewModel, 'requestQuery').and.returnValue(requestResult);
+      spyOn(viewModel, 'getDocumentQuery').and.returnValue(query);
+    });
+
+    it('forms query from documentTypes.evidences', function () {
+      var evidences;
+      var docTypes = 'documentTypes.evidences';
+
+      viewModel.attr(docTypes, {});
+      viewModel.loadEvidences();
+      evidences = viewModel.attr(docTypes);
+
+      expect(viewModel.getDocumentQuery).toHaveBeenCalledWith(evidences);
+    });
+
+    it('returns result of requestQuery', function () {
+      var result = viewModel.loadEvidences();
+      expect(result).toBe(requestResult);
+    });
+
+    it('uses query for Evidences and "evidences" type', function () {
+      var type = 'evidences';
+      viewModel.loadEvidences();
+      expect(viewModel.requestQuery).toHaveBeenCalledWith(query, type);
+    });
+  });
+
+  describe('loadUrls method()', function () {
+    var query;
+    var requestResult;
+
+    beforeEach(function () {
+      query = {};
+      requestResult = can.Deferred().resolve();
+
+      spyOn(viewModel, 'requestQuery').and.returnValue(requestResult);
+      spyOn(viewModel, 'getDocumentQuery').and.returnValue(query);
+    });
+
+    it('forms query from documentTypes.urls', function () {
+      var urls;
+      var docTypes = 'documentTypes.urls';
+
+      viewModel.attr(docTypes, {});
+      viewModel.loadUrls();
+      urls = viewModel.attr(docTypes);
+
+      expect(viewModel.getDocumentQuery).toHaveBeenCalledWith(urls);
+    });
+
+    it('returns result of requestQuery', function () {
+      var result = viewModel.loadUrls();
+      expect(result).toBe(requestResult);
+    });
+
+    it('uses query for Urls and "url" type', function () {
+      var type = 'urls';
+      viewModel.loadUrls();
+      expect(viewModel.requestQuery).toHaveBeenCalledWith(query, type);
+    });
+  });
+
+  describe('loadReferenceUrls method()', function () {
+    var query;
+    var requestResult;
+
+    beforeEach(function () {
+      query = {};
+      requestResult = can.Deferred().resolve();
+
+      spyOn(viewModel, 'requestQuery').and.returnValue(requestResult);
+      spyOn(viewModel, 'getDocumentQuery').and.returnValue(query);
+    });
+
+    it('forms query from documentTypes.referenceUrls', function () {
+      var referenceUrls;
+      var docTypes = 'documentTypes.referenceUrls';
+
+      viewModel.attr(docTypes, {});
+      viewModel.loadReferenceUrls();
+      referenceUrls = viewModel.attr(docTypes);
+
+      expect(viewModel.getDocumentQuery).toHaveBeenCalledWith(referenceUrls);
+    });
+
+    it('returns result of requestQuery', function () {
+      var result = viewModel.loadReferenceUrls();
+      expect(result).toBe(requestResult);
+    });
+
+    it('uses query for ReferenceUrls and "referenceUrls" type', function () {
+      var type = 'referenceUrls';
+      viewModel.loadReferenceUrls();
+      expect(viewModel.requestQuery).toHaveBeenCalledWith(query, type);
+    });
+  });
+
+  describe('updateItems method()', function () {
+    var types;
+    var loadedData;
+
+    beforeEach(function () {
+      loadedData = [1, 2, 3];
+      types = ['Urls', 'Evidences'];
+
+      _.each(types, function (type) {
+        var methodName = 'load' + type;
+        viewModel.attr(type, []);
+        spyOn(viewModel, methodName).and.returnValue(loadedData);
+      });
+    });
+
+    it('calls appopriate methods with the passed capitalized types',
+    function () {
+      var notCapitalized = _.map(types, function (type) {
+        return type.toLowerCase();
+      });
+
+      viewModel.updateItems.apply(viewModel, notCapitalized);
+
+      _.each(types, function (type) {
+        var methodName = 'load' + type;
+        expect(viewModel[methodName]).toHaveBeenCalled();
+      });
+    });
+
+    it('replaces values of passed fields in VM with the results of ' +
+    'appopriate methods', function () {
+      viewModel.updateItems.apply(viewModel, types);
+
+      _.each(types, function (type) {
+        var data = viewModel
+          .attr(type)
+          .serialize();
+        expect(data).toEqual(loadedData);
+      });
+    });
+
+    it('not throws an exception if types is not passed', function () {
+      var closure = function () {
+        viewModel.updateItems();
+      };
+
+      expect(closure).not.toThrow();
+    });
+  });
+
+  describe('afterCreate method()', function () {
+    var items;
+    var event;
+    var type;
+
+    beforeEach(function () {
+      var commonStamp;
+      var beforeCreate;
+
+      type = 'type';
+      commonStamp = [{}, {}];
+      beforeCreate = [{
+        data: 'Fake data 1',
+        isDraft: false,
+        _stamp: commonStamp[0]
+      }, {
+        data: 'Fake data 2',
+        isDraft: false,
+        _stamp: commonStamp[1]
+      }, {
+        data: 'Fake data 3',
+        isDraft: false,
+        _stamp: {}
+      }];
+      viewModel.attr(type, beforeCreate);
+
+      items = new can.List([{
+        data: 'Important data 1',
+        isDraft: true,
+        _stamp: viewModel
+          .attr(type)[1]
+          .attr('_stamp')
+      }, {
+        data: 'Important data 2',
+        isDraft: true,
+        _stamp: viewModel
+          .attr(type)[0]
+          .attr('_stamp')
+      }, {
+        data: 'Important data 3',
+        isDraft: true,
+        _stamp: {}
+      }]);
+
+      event = {
+        items: items,
+        success: true
+      };
+    });
+
+    it('sets "isUpdating{<some capitalized type>}" property based on passed ' +
+    'type to false', function () {
+      var expectedProp = 'isUpdating' + can.capitalize(type);
+
+      viewModel.attr(expectedProp, true);
+      viewModel.afterCreate(event, type);
+
+      expect(viewModel.attr(expectedProp)).toBe(false);
+    });
+
+    it('sets new items only if each item from them is saved', function () {
+      var expectedResult = [{
+        data: 'Important data 2'
+      }, {
+        data: 'Fake data 3',
+        isDraft: false,
+        _stamp: {}
+      }];
+      items[0].attr('isNotSaved', true);
+      viewModel.afterCreate(event, type);
+      expect(viewModel
+        .attr(type)
+        .serialize()
+      ).toEqual(expectedResult);
+    });
+
+    describe('if some item from passed items has the same _stamp field value ' +
+    '(strict equality) as some item from original items array', function () {
+      it('removes _stamp and isDraft props from passed items placed in event ' +
+      'object', function () {
+        var expected = [{
+          data: 'Important data 1'
+        }, {
+          data: 'Important data 2'
+        }, {
+          data: 'Important data 3',
+          isDraft: true,
+          _stamp: {}
+        }];
+
+        viewModel.afterCreate(event, type);
+
+        expect(items.serialize()).toEqual(expected);
+      });
+
+      it('sets the flag isNotSaved to true for item from passed items if ' +
+      'event.success is false', function () {
+        var expected = [{
+          data: 'Important data 1',
+          isNotSaved: true
+        }, {
+          data: 'Important data 2',
+          isNotSaved: true
+        }, {
+          data: 'Important data 3',
+          isDraft: true,
+          _stamp: {}
+        }];
+
+        event.success = false;
+        viewModel.afterCreate(event, type);
+
+        expect(items.serialize()).toEqual(expected);
       });
     });
   });
