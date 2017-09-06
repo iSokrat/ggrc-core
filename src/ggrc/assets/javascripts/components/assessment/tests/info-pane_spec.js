@@ -683,4 +683,179 @@ describe('GGRC.Components.assessmentInfoPane', function () {
       });
     });
   });
+
+  describe('addItems method()', function () {
+    var type;
+    var event;
+
+    beforeEach(function () {
+      type = 'Type';
+      event = {
+        items: [1, 2, 3]
+      };
+      viewModel.attr(type, [4, 5, 6]);
+    });
+
+    it('pushes items from event into beginning of the list with name from ' +
+    'type param', function () {
+      var beforeInvoke = viewModel.attr(type).serialize();
+      var expectedResult = event.items.concat(beforeInvoke);
+
+      viewModel.addItems(event, type);
+
+      expect(viewModel
+        .attr(type)
+        .serialize()
+      ).toEqual(expectedResult);
+    });
+
+    it('sets "isUpdating{<some capitalized type>}" property based on passed ' +
+    'type to true', function () {
+      var expectedProp = 'isUpdating' + can.capitalize(type);
+      viewModel.attr(expectedProp, false);
+
+      viewModel.addItems(event, type);
+      expect(viewModel.attr(expectedProp)).toBe(true);
+    });
+
+    it('makes array from event.items if it is array-like object', function () {
+      var beforeInvoke = viewModel.attr(type).serialize();
+      var expectedResult = event.items.concat(beforeInvoke);
+
+      event.items = new can.List(event.items);
+      viewModel.addItems(event, type);
+
+      expect(viewModel
+        .attr(type)
+        .serialize()
+      ).toEqual(expectedResult);
+    });
+  });
+
+  describe('getDocumentAdditionFilter method()', function () {
+    it('configures filter based on passed type', function () {
+      var documentType = 'Type';
+      var expectedResult = {
+        expression: {
+          left: 'document_type',
+          op: {name: '='},
+          right: documentType
+        }
+      };
+      var result = viewModel.getDocumentAdditionFilter(documentType);
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('returns empty array if passed documentType is empty', function () {
+      var result = viewModel.getDocumentAdditionFilter();
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('addAction method()', function () {
+    var actionType;
+    var related;
+    var actionsRoot;
+
+    beforeEach(function () {
+      var instanceName = 'instance';
+
+      actionsRoot = instanceName + '.actions';
+      actionType = 'actionType';
+      related = {
+        data: 'Important data'
+      };
+      viewModel.attr(instanceName, {});
+    });
+
+    it('sets instance.actions to empty object if there are no actions',
+    function () {
+      viewModel.addAction(actionType, related);
+      expect(viewModel.attr(actionsRoot)).toBeDefined();
+    });
+
+    it('pushes into actions.{<passed actionType>} passed related item if ' +
+    'there is actions.{<passed actionType>}', function () {
+      var last;
+      var itemsPath = actionsRoot + '.' + actionType;
+
+      viewModel.attr(actionsRoot, {});
+      viewModel.attr(itemsPath, [{}]);
+      viewModel.addAction(actionType, related);
+
+      last = viewModel.attr(itemsPath).pop();
+      expect(last.serialize()).toEqual(related);
+    });
+
+    it('creates actions.{<passed actionType>} list for instance with passed ' +
+    'related item', function () {
+      var expected = [related];
+      var itemsPath = actionsRoot + '.' + actionType;
+      viewModel.addAction(actionType, related);
+      expect(viewModel
+        .attr(itemsPath)
+        .serialize()
+      ).toEqual(expected);
+    });
+  });
+
+  describe('addRelatedItem method()', function () {
+    var event;
+    var type;
+
+    beforeEach(function () {
+      type = 'type';
+      event = {
+        item: new can.Map({
+          id: 1,
+          type: 'Type'
+        })
+      };
+      viewModel.attr('instance', {
+        dispatch: jasmine.createSpy('dispatch')
+      });
+      viewModel.attr('deferredSave', {
+        push: jasmine.createSpy('push').and.returnValue(can.Deferred())
+      });
+    });
+
+    it('dispatches afterCommentCreated event on instance', function () {
+      var instance = viewModel.attr('instance');
+      viewModel.addRelatedItem(event, type);
+      expect(instance.dispatch).toHaveBeenCalled();
+    });
+
+    it('pushes into deferredSave transaction queue a function', function () {
+      var dfdQueue = viewModel.attr('deferredSave');
+      viewModel.addRelatedItem(event, type);
+      expect(dfdQueue.push).toHaveBeenCalledWith(jasmine.any(Function));
+    });
+
+    describe('pushed function into deferredSave', function () {
+      var pushedFunc;
+
+      beforeEach(function () {
+        viewModel.addRelatedItem(event, type);
+        pushedFunc = viewModel.attr('deferredSave').push.calls.argsFor(0)[0];
+      });
+
+      it('adds add_related action with related object', function () {
+        expect(pushedFunc).toHaveBeenCalledWith(jasmine.any(Function));
+      });
+    });
+
+    it('calls afterCreate with appopriate params after resolving defferSave' +
+    'with success equals to true', function () {
+
+    });
+
+    it('calls afterCreate with appopriate params after rejection defferSave' +
+    'with success equals to false', function () {
+
+    });
+
+    it('removes actions after processing deferredSave', function () {
+
+    });
+  });
 });
