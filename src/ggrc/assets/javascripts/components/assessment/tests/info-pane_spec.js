@@ -1072,7 +1072,47 @@ describe('GGRC.Components.assessmentInfoPane', function () {
   });
 
   describe('updateRelatedItems method()', function () {
+    beforeEach(function () {
+      var loadPrefix = 'load';
+      var data = [
+        'Snapshots', 'Comments', 'Evidences', 'Urls', 'ReferenceUrls'
+      ];
+      data
+        .map(function (item) {
+          return loadPrefix + item;
+        })
+        .forEach(function (methodName) {
+          spyOn(viewModel, methodName);
+        });
+    });
 
+    it('sets isUpdatingRelatedItems property to true', function () {
+      var prop = 'isUpdatingRelatedItems';
+      viewModel.attr(prop, false);
+      viewModel.updateRelatedItems();
+      expect(viewModel.attr(prop)).toBe(true);
+    });
+
+    it('replaces mappedSnapshots list with loaded mapped snapshots',
+    function () {
+
+    });
+
+    it('replaces comments list with loaded comments', function () {
+
+    });
+
+    it('replaces evidances list with loaded evidances', function () {
+
+    });
+
+    it('replaces urls list with loaded urls', function () {
+
+    });
+
+    it('replaces referenceUrls list with loaded referenceUrls', function () {
+
+    });
   });
 
   describe('initializeFormFields method()', function () {
