@@ -264,8 +264,8 @@ describe('GGRC.Components.assessmentInfoPane', function () {
         .returnValue(can.Deferred());
     });
 
-    it('sets "isUpdating{<some capitalized type>}" property based on passed ' +
-    'type to true before resolving a request', function () {
+    it('sets "isUpdating{<passed capitalized type>}" property to true before ' +
+    'resolving a request', function () {
       var type = 'type';
       var expectedProp = 'isUpdating' + can.capitalize(type);
 
@@ -302,8 +302,8 @@ describe('GGRC.Components.assessmentInfoPane', function () {
           );
       });
 
-      it('sets "isUpdating{<some capitalized type>}" property based on ' +
-      'passed type to false after request', function (done) {
+      it('sets "isUpdating{<passed capitalized type>}" property to false ' +
+      'after request', function (done) {
         var type = 'type';
         var expectedProp = 'isUpdating' + can.capitalize(type);
 
@@ -617,8 +617,8 @@ describe('GGRC.Components.assessmentInfoPane', function () {
       };
     });
 
-    it('sets "isUpdating{<some capitalized type>}" property based on passed ' +
-    'type to false', function () {
+    it('sets "isUpdating{<passed capitalized type>}" property to false',
+    function () {
       var expectedProp = 'isUpdating' + can.capitalize(type);
 
       viewModel.attr(expectedProp, true);
@@ -709,8 +709,8 @@ describe('GGRC.Components.assessmentInfoPane', function () {
       ).toEqual(expectedResult);
     });
 
-    it('sets "isUpdating{<some capitalized type>}" property based on passed ' +
-    'type to true', function () {
+    it('sets "isUpdating{<passed capitalized type>}" property to true',
+    function () {
       var expectedProp = 'isUpdating' + can.capitalize(type);
       viewModel.attr(expectedProp, false);
 
@@ -862,40 +862,213 @@ describe('GGRC.Components.assessmentInfoPane', function () {
       });
     });
 
-    it('calls afterCreate with appopriate params after resolving defferSave' +
-    'with success equals to true', function () {
-      dfd.resolve(assessment);
-      viewModel.addRelatedItem(event, type);
+    describe('resolves deferredSave', function () {
+      beforeEach(function () {
+        dfd.resolve(assessment);
+      });
 
-      expect(viewModel.afterCreate.calls.count()).toBe(1);
-      expect(viewModel.afterCreate).toHaveBeenCalledWith({
-        items: [event.item],
-        success: true
-      }, type);
+      it('calls afterCreate with appopriate params with success equals ' +
+      'to true', function (done) {
+        viewModel.addRelatedItem(event, type);
+        dfd.then(function () {
+          expect(viewModel.afterCreate.calls.count()).toBe(1);
+          expect(viewModel.afterCreate).toHaveBeenCalledWith({
+            items: [event.item],
+            success: true
+          }, type);
+          done();
+        });
+      });
     });
 
-    it('calls afterCreate with appopriate params after rejection defferSave' +
-    'with success equals to false', function () {
-      dfd.reject(assessment);
-      viewModel.addRelatedItem(event, type);
+    describe('rejects deferredSave', function () {
+      beforeEach(function () {
+        dfd.reject(assessment);
+      });
 
-      expect(viewModel.afterCreate.calls.count()).toBe(1);
-      expect(viewModel.afterCreate).toHaveBeenCalledWith({
-        items: [event.item],
-        success: false
-      }, type);
+      it('calls afterCreate with appopriate params with success equals to ' +
+      'false', function (done) {
+        dfd.reject(assessment);
+        viewModel.addRelatedItem(event, type);
+        dfd.fail(function () {
+          expect(viewModel.afterCreate.calls.count()).toBe(1);
+          expect(viewModel.afterCreate).toHaveBeenCalledWith({
+            items: [event.item],
+            success: false
+          }, type);
+          done();
+        });
+      });
     });
 
-    it('removes actions for assessment from response after processing ' +
-    'deferredSave', function () {
-      dfd.resolve(assessment);
-      viewModel.addRelatedItem(event, type);
-      expect(assessment.attr('actions')).toBeUndefined();
+    describe('executes always after deferredSave resolving or rejecting',
+    function () {
+      it('removes actions for assessment from response after resolve',
+      function (done) {
+        dfd.resolve(assessment);
+        viewModel.addRelatedItem(event, type);
+        dfd.always(function () {
+          expect(assessment.attr('actions')).toBeUndefined();
+          done();
+        });
+      });
+
+      it('removes actions for assessment from response after reject',
+      function (done) {
+        dfd.reject(assessment);
+        viewModel.addRelatedItem(event, type);
+        dfd.always(function () {
+          expect(assessment.attr('actions')).toBeUndefined();
+          done();
+        });
+      });
     });
   });
 
   describe('removeRelatedItem method()', function () {
+    var dfd;
+    var type;
+    var item;
+    var items;
+    var related;
+    var assessment;
 
+    beforeEach(function () {
+      var countOfItems = 3;
+      dfd = can.Deferred();
+      type = 'type';
+      items = new can.List(
+        Array(countOfItems)
+      ).map(function (item, index) {
+        return {
+          id: index,
+          type: 'Awesome type'
+        };
+      });
+      item = items.attr(countOfItems - 1);
+      related = {
+        id: item.attr('id'),
+        type: item.attr('type')
+      };
+      assessment = new can.Map({
+        actions: []
+      });
+      viewModel.attr(type, items);
+      viewModel.attr('deferredSave', {
+        push: jasmine.createSpy('push').and.returnValue(dfd)
+      });
+
+      spyOn(viewModel, 'addAction');
+      spyOn(GGRC.Errors, 'notifier');
+    });
+
+    it('sets "isUpdating{<passed capitalized type>}" property to true ' +
+    'before resolving a deferredSave', function () {
+      var expectedProp = 'isUpdating' + can.capitalize(type);
+      viewModel.removeRelatedItem(item, type);
+      expect(viewModel.attr(expectedProp)).toBe(true);
+    });
+
+    it('removes passed item from {<passed type>} list', function () {
+      viewModel.removeRelatedItem(item, type);
+      expect(items.indexOf(item)).toBe(-1);
+    });
+
+    describe('pushed function into deferredSave', function () {
+      var pushedFunc;
+
+      beforeEach(function () {
+        viewModel.removeRelatedItem(item, type);
+        pushedFunc = viewModel.attr('deferredSave').push.calls.argsFor(0)[0];
+      });
+
+      it('adds remove_related action with related object', function () {
+        pushedFunc();
+        expect(viewModel.addAction).toHaveBeenCalledWith(
+          'remove_related',
+          related
+        );
+      });
+    });
+
+    describe('rejects deferredSave', function () {
+      beforeEach(function () {
+        dfd.reject(assessment);
+      });
+
+      it('shows error', function (done) {
+        viewModel.removeRelatedItem(item, type);
+        dfd.fail(function () {
+          expect(GGRC.Errors.notifier).toHaveBeenCalledWith(
+            'error',
+            'Unable to remove URL.'
+          );
+          done();
+        });
+      });
+
+      it('inserts removed item from {<passed type>} list at previous place',
+      function (done) {
+        viewModel.removeRelatedItem(item, type);
+        dfd.fail(function () {
+          expect(items.indexOf(item)).not.toBe(-1);
+          done();
+        });
+      });
+    });
+
+    describe('executes always after deferredSave resolving or rejecting',
+    function () {
+      it('sets "isUpdating{<passed capitalized type>}" property to false ' +
+      'after resolve',
+      function (done) {
+        var expectedProp = 'isUpdating' + can.capitalize(type);
+
+        dfd.resolve(assessment);
+        viewModel.removeRelatedItem(item, type);
+
+        dfd.always(function () {
+          expect(viewModel.attr(expectedProp)).toBe(false);
+          done();
+        });
+      });
+
+      it('removes actions for assessment from response after resolve',
+      function (done) {
+        dfd.resolve(assessment);
+        viewModel.removeRelatedItem(item, type);
+
+        dfd.always(function () {
+          expect(assessment.attr('actions')).toBeUndefined();
+          done();
+        });
+      });
+
+      it('sets "isUpdating{<passed capitalized type>}" property to false ' +
+      'after reject',
+      function (done) {
+        var expectedProp = 'isUpdating' + can.capitalize(type);
+
+        dfd.reject(assessment);
+        viewModel.removeRelatedItem(item, type);
+
+        dfd.always(function () {
+          expect(viewModel.attr(expectedProp)).toBe(false);
+          done();
+        });
+      });
+
+      it('removes actions for assessment from response after reject',
+      function (done) {
+        dfd.reject(assessment);
+        viewModel.removeRelatedItem(item, type);
+
+        dfd.always(function () {
+          expect(assessment.attr('actions')).toBeUndefined();
+          done();
+        });
+      });
+    });
   });
 
   describe('updateRelatedItems method()', function () {
