@@ -800,10 +800,14 @@ describe('GGRC.Components.assessmentInfoPane', function () {
   });
 
   describe('addRelatedItem method()', function () {
+    var assessment;
     var event;
     var type;
+    var related;
+    var dfd;
 
     beforeEach(function () {
+      dfd = can.Deferred();
       type = 'type';
       event = {
         item: new can.Map({
@@ -811,12 +815,22 @@ describe('GGRC.Components.assessmentInfoPane', function () {
           type: 'Type'
         })
       };
-      viewModel.attr('instance', {
-        dispatch: jasmine.createSpy('dispatch')
+      related = {
+        id: event.item.attr('id'),
+        type: event.item.attr('type')
+      };
+      assessment = new can.Map({
+        actions: []
       });
+
+      viewModel.attr('instance', {});
+      viewModel.attr('instance').dispatch = jasmine.createSpy('dispatch');
       viewModel.attr('deferredSave', {
-        push: jasmine.createSpy('push').and.returnValue(can.Deferred())
+        push: jasmine.createSpy('push').and.returnValue(dfd)
       });
+
+      spyOn(viewModel, 'addAction');
+      spyOn(viewModel, 'afterCreate');
     });
 
     it('dispatches afterCommentCreated event on instance', function () {
@@ -840,22 +854,63 @@ describe('GGRC.Components.assessmentInfoPane', function () {
       });
 
       it('adds add_related action with related object', function () {
-        expect(pushedFunc).toHaveBeenCalledWith(jasmine.any(Function));
+        pushedFunc();
+        expect(viewModel.addAction).toHaveBeenCalledWith(
+          'add_related',
+          related
+        );
       });
     });
 
     it('calls afterCreate with appopriate params after resolving defferSave' +
     'with success equals to true', function () {
+      dfd.resolve(assessment);
+      viewModel.addRelatedItem(event, type);
 
+      expect(viewModel.afterCreate.calls.count()).toBe(1);
+      expect(viewModel.afterCreate).toHaveBeenCalledWith({
+        items: [event.item],
+        success: true
+      }, type);
     });
 
     it('calls afterCreate with appopriate params after rejection defferSave' +
     'with success equals to false', function () {
+      dfd.reject(assessment);
+      viewModel.addRelatedItem(event, type);
 
+      expect(viewModel.afterCreate.calls.count()).toBe(1);
+      expect(viewModel.afterCreate).toHaveBeenCalledWith({
+        items: [event.item],
+        success: false
+      }, type);
     });
 
-    it('removes actions after processing deferredSave', function () {
-
+    it('removes actions for assessment from response after processing ' +
+    'deferredSave', function () {
+      dfd.resolve(assessment);
+      viewModel.addRelatedItem(event, type);
+      expect(assessment.attr('actions')).toBeUndefined();
     });
+  });
+
+  describe('removeRelatedItem method()', function () {
+
+  });
+
+  describe('updateRelatedItems method()', function () {
+
+  });
+
+  describe('initializeFormFields method()', function () {
+
+  });
+
+  describe('initGlobalAttributes method()', function () {
+
+  });
+
+  describe('initializeDeferredSave method()', function () {
+
   });
 });
