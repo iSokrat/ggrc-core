@@ -1072,18 +1072,24 @@ describe('GGRC.Components.assessmentInfoPane', function () {
   });
 
   describe('updateRelatedItems method()', function () {
+    var results;
+
     beforeEach(function () {
       var loadPrefix = 'load';
       var data = [
         'Snapshots', 'Comments', 'Evidences', 'Urls', 'ReferenceUrls'
       ];
-      data
+      results = data
         .map(function (item) {
           return loadPrefix + item;
         })
-        .forEach(function (methodName) {
-          spyOn(viewModel, methodName);
-        });
+        .reduce(function (acc, methodName, index) {
+          acc[methodName] = [index];
+          return acc;
+        }, {});
+      _.each(results, function (returnValue, methodName) {
+        spyOn(viewModel, methodName).and.returnValue(returnValue);
+      });
     });
 
     it('sets isUpdatingRelatedItems property to true', function () {
@@ -1095,35 +1101,355 @@ describe('GGRC.Components.assessmentInfoPane', function () {
 
     it('replaces mappedSnapshots list with loaded mapped snapshots',
     function () {
+      var prop = 'mappedSnapshots';
+      var ref = viewModel
+        .attr(prop, [])
+        .attr(prop);
 
+      viewModel.updateRelatedItems();
+
+      expect(viewModel.attr(prop)).toBe(ref);
+      expect(viewModel.attr(prop).serialize()).toEqual(
+        results.loadSnapshots
+      );
     });
 
     it('replaces comments list with loaded comments', function () {
+      var prop = 'comments';
+      var data = viewModel
+        .attr(prop, [])
+        .attr(prop);
 
+      viewModel.updateRelatedItems();
+
+      expect(viewModel.attr(prop)).toBe(data);
+      expect(viewModel.attr(prop).serialize()).toEqual(results.loadComments);
     });
 
     it('replaces evidances list with loaded evidances', function () {
+      var prop = 'evidences';
+      var data = viewModel
+        .attr(prop, [])
+        .attr(prop);
 
+      viewModel.updateRelatedItems();
+
+      expect(viewModel.attr(prop)).toBe(data);
+      expect(viewModel.attr(prop).serialize()).toEqual(results.loadEvidences);
     });
 
     it('replaces urls list with loaded urls', function () {
+      var prop = 'urls';
+      var data = viewModel
+        .attr(prop, [])
+        .attr(prop);
 
+      viewModel.updateRelatedItems();
+
+      expect(viewModel.attr(prop)).toBe(data);
+      expect(viewModel.attr(prop).serialize()).toEqual(results.loadUrls);
     });
 
     it('replaces referenceUrls list with loaded referenceUrls', function () {
+      var prop = 'referenceUrls';
+      var data = viewModel
+        .attr(prop, [])
+        .attr(prop);
 
+      viewModel.updateRelatedItems();
+
+      expect(viewModel.attr(prop)).toBe(data);
+      expect(viewModel.attr(prop).serialize()).toEqual(
+        results.loadReferenceUrls
+      );
     });
   });
 
   describe('initializeFormFields method()', function () {
+    var CAUtils;
+    var results;
 
+    beforeAll(function () {
+      CAUtils = GGRC.Utils.CustomAttributes;
+    });
+
+    beforeEach(function () {
+      viewModel.attr({
+        formFields: [],
+        instance: {
+          custom_attribute_values: []
+        }
+      });
+      results = [1, 2, 3];
+      spyOn(CAUtils, 'getAttributes');
+      spyOn(CAUtils, 'convertValuesToFormFields');
+    });
+
+    it('gets CA with help GGRC.Utils.CustomAttributes.getAttributes',
+    function () {
+      viewModel.initializeFormFields();
+      expect(CAUtils.getAttributes).toHaveBeenCalledWith(
+        viewModel.attr('instance.custom_attribute_values'), true
+      );
+    });
+
+    it('converts CA values to form fields', function () {
+      CAUtils.getAttributes.and.returnValue(results);
+      viewModel.initializeFormFields();
+      expect(CAUtils.convertValuesToFormFields).toHaveBeenCalledWith(results);
+    });
+
+    it('sets form fields to converted CA values', function () {
+      CAUtils.convertValuesToFormFields.and.returnValue(results);
+      viewModel.initializeFormFields();
+      expect(
+        viewModel.attr('formFields').serialize()
+      ).toEqual(results);
+    });
   });
 
   describe('initGlobalAttributes method()', function () {
+    var CAUtils;
+    var results;
 
+    beforeAll(function () {
+      CAUtils = GGRC.Utils.CustomAttributes;
+    });
+
+    beforeEach(function () {
+      viewModel.attr({
+        globalAttributes: [],
+        instance: {
+          custom_attribute_values: []
+        }
+      });
+      results = [1, 2, 3];
+      spyOn(CAUtils, 'getAttributes').and.returnValue(results);
+      spyOn(CAUtils, 'convertToFormViewField').and.callFake(_.identity);
+    });
+
+    it('gets CA with help GGRC.Utils.CustomAttributes.getAttributes',
+    function () {
+      viewModel.initGlobalAttributes();
+      expect(CAUtils.getAttributes).toHaveBeenCalledWith(
+        viewModel.attr('instance.custom_attribute_values'), false
+      );
+    });
+
+    it('converts CA values to form fields', function () {
+      viewModel.initGlobalAttributes();
+      _.each(results, function (result) {
+        expect(CAUtils.convertToFormViewField).toHaveBeenCalledWith(result);
+      });
+    });
+
+    it('sets form fields to converted CA values', function () {
+      var expectedResult = results.map(CAUtils.convertToFormViewField);
+      viewModel.initGlobalAttributes();
+      expect(
+        viewModel.attr('globalAttributes').serialize()
+      ).toEqual(expectedResult);
+    });
   });
 
   describe('initializeDeferredSave method()', function () {
+    beforeEach(function () {
+      viewModel.attr('deferredSave', {});
+    });
+
+    it('sets for deferredSave a DeferredTransaction instance', function () {
+      viewModel.initializeDeferredSave();
+      expect(viewModel.attr('deferredSave')).toEqual(jasmine.any(
+        GGRC.Utils.DeferredTransaction
+      ));
+    });
+
+    describe('calls a DeferredTransaction constructor for deferredSave namely',
+    function () {
+      var args;
+      var ARGS_ORDER;
+
+      beforeAll(function () {
+        ARGS_ORDER = {
+          CALLBACK: 0,
+          TIMEOUT: 1,
+          SEQUENTIALLY: 2
+        };
+      });
+
+      beforeEach(function () {
+        spyOn(GGRC.Utils, 'DeferredTransaction');
+        viewModel.initializeDeferredSave();
+        args = GGRC.Utils.DeferredTransaction.calls.argsFor(0);
+      });
+
+      it('sets completeTransaction param as a function', function () {
+        expect(
+          args[ARGS_ORDER.CALLBACK]
+        ).toEqual(jasmine.any(Function));
+      });
+
+      it('sets 1000ms execution delay with help timeout param', function () {
+        var expectedResult = 1000;
+        expect(
+          args[ARGS_ORDER.TIMEOUT]
+        ).toBe(expectedResult);
+      });
+
+      it('sets sequentially flag with true with help sequentially param',
+      function () {
+        var expectedResult = true;
+        expect(
+          args[ARGS_ORDER.SEQUENTIALLY]
+        ).toBe(expectedResult);
+      });
+
+      describe('sets completeTransaction function which', function () {
+        var completeTransaction;
+        var resolveFunc;
+        var rejectFunc;
+        var dfd;
+
+        beforeEach(function () {
+          dfd = can.Deferred();
+          completeTransaction = args[ARGS_ORDER.CALLBACK];
+          viewModel.attr('instance', {
+            save: jasmine.createSpy('save').and.returnValue(dfd)
+          });
+          resolveFunc = jasmine.createSpy('resolveFunc');
+          rejectFunc = jasmine.createSpy('rejectFunc');
+        });
+
+        it('saves instance', function () {
+          completeTransaction();
+          expect(viewModel.attr('instance').save).toHaveBeenCalled();
+        });
+
+        it('calls passed resolve function if the saving was resolved',
+        function (done) {
+          dfd.resolve();
+          completeTransaction(resolveFunc, rejectFunc);
+          dfd.done(function () {
+            expect(resolveFunc).toHaveBeenCalled();
+            expect(rejectFunc).not.toHaveBeenCalled();
+            done();
+          });
+        });
+
+        it('calls passed reject function if the saving was rejected',
+        function (done) {
+          dfd.reject();
+          completeTransaction(resolveFunc, rejectFunc);
+          dfd.fail(function () {
+            expect(rejectFunc).toHaveBeenCalled();
+            expect(resolveFunc).not.toHaveBeenCalled();
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  describe('onStateChange method()', function () {
+    var event;
+    var instance;
+
+    beforeEach(function () {
+      event = {
+        status: 'New status',
+        undo: true,
+        isPending: false
+      };
+      viewModel.attr({
+        instance: {
+          status: 'Status',
+          previousStatus: 'Prev status'
+        },
+        formState: {
+          formSavedDeferred: can.Deferred()
+        }
+      });
+      instance = viewModel.attr('instance');
+    });
+
+    it('sets deferred for onStateChangeDfd field', function () {
+      var isDeferred;
+      viewModel.onStateChange(event);
+      isDeferred = can.isDeferred(
+        viewModel.attr('onStateChangeDfd')
+      );
+      expect(isDeferred).toBe(true);
+    });
+
+    it('sets previousStatus for instance undefined if event.isUndo is true',
+    function () {
+      viewModel.onStateChange(event);
+      expect(instance.attr('previousStatus')).toBeUndefined();
+    });
+
+    it('sets previousStatus for instance a status value if event.undo ' +
+    'is false',
+    function () {
+      event.undo = false;
+      viewModel.onStateChange(event);
+      expect(
+        instance.attr('previousStatus')
+      ).toBe(
+        instance.attr('status')
+      );
+    });
+
+    it('sets isPending flag for instance to true', function () {
+      viewModel.onStateChange(event);
+      expect(instance.attr('isPending')).toBe(true);
+    });
+
+    describe('after resolving a formState.formSavedDeferred', function () {
+      it('refreshes instance', function () {
+
+      });
+
+      describe('after refreshing', function () {
+        it('sets status to previousStatus if it exists and event.undo is ' +
+        'true after refreshing',
+        function () {
+
+        });
+
+        it('sets status to "In Progress" if it does not exist after refreshing',
+        function () {
+
+        });
+
+        it('sets status to previousStatus if it exists after refreshing',
+        function () {
+
+        });
+      });
+    });
+  });
+
+  describe('saveGlobalAttributes method()', function () {
+
+  });
+
+  describe('showRequiredInfoModal method()', function () {
+
+  });
+
+  describe('init method()', function () {
+
+  });
+
+  describe(' method()', function () {
+
+  });
+
+  describe(' method()', function () {
+
+  });
+
+  describe(' method()', function () {
 
   });
 });
