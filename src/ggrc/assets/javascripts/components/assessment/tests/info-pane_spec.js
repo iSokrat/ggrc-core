@@ -1353,23 +1353,32 @@ describe('GGRC.Components.assessmentInfoPane', function () {
   describe('onStateChange method()', function () {
     var event;
     var instance;
+    var formSavedDfd;
+    var refreshDfd;
+    var saveDfd;
 
     beforeEach(function () {
+      refreshDfd = can.Deferred();
+      saveDfd = can.Deferred();
+      formSavedDfd = can.Deferred();
       event = {
-        status: 'New status',
-        undo: true,
-        isPending: false
+        state: 'New status',
+        undo: true
       };
+      instance = new can.Map({
+        isPending: false,
+        status: 'Status',
+        previousStatus: 'Prev status',
+        refresh: jasmine.createSpy('refresh').and.returnValue(refreshDfd),
+        save: jasmine.createSpy('save').and.returnValue(saveDfd)
+      });
       viewModel.attr({
-        instance: {
-          status: 'Status',
-          previousStatus: 'Prev status'
-        },
+        instance: instance,
+        onStateChangeDfd: can.Deferred(),
         formState: {
-          formSavedDeferred: can.Deferred()
+          formSavedDeferred: formSavedDfd
         }
       });
-      instance = viewModel.attr('instance');
     });
 
     it('sets deferred for onStateChangeDfd field', function () {
@@ -1405,36 +1414,330 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
 
     describe('after resolving a formState.formSavedDeferred', function () {
-      it('refreshes instance', function () {
-
+      beforeEach(function () {
+        formSavedDfd.resolve();
       });
 
-      describe('after refreshing', function () {
-        it('sets status to previousStatus if it exists and event.undo is ' +
-        'true after refreshing',
-        function () {
+      it('refreshes instance', function (done) {
+        viewModel.onStateChange(event);
+        formSavedDfd.then(function () {
+          done();
+        });
+      });
 
+      describe('after resolving a refresh operation', function () {
+        var $fakeBody;
+
+        beforeEach(function () {
+          refreshDfd.resolve();
+          $fakeBody = {
+            trigger: jasmine.createSpy('trigger')
+          };
+
+          spyOn(window, '$').and.returnValue($fakeBody);
         });
 
-        it('sets status to "In Progress" if it does not exist after refreshing',
-        function () {
-
+        it('sets instance status to previous status if event.undo is true and ' +
+        'previous status is not empty', function (done) {
+          var expectedResult = instance.attr('previousStatus');
+          viewModel.onStateChange(event);
+          refreshDfd.then(function () {
+            expect(instance.attr('status')).toBe(expectedResult);
+            done();
+          });
         });
 
-        it('sets status to previousStatus if it exists after refreshing',
-        function () {
+        it('sets instance status to "In Progress" if event.undo is true and ' +
+        'it does not exist ', function (done) {
+          var expectedResult = 'In Progress';
+          instance.removeAttr('previousStatus');
+          viewModel.onStateChange(event);
+          refreshDfd.then(function () {
+            expect(instance.attr('status')).toBe(expectedResult);
+            done();
+          });
+        });
 
+        it('sets instance status to event.state if event.undo is false',
+        function (done) {
+          event.undo = false;
+          viewModel.onStateChange(event);
+          refreshDfd.then(function () {
+            expect(instance.attr('status')).toBe(event.state);
+            done();
+          });
+        });
+
+        it('triggers flash hint message event if event.undo is false and ' +
+        'instance status is "In Review"', function (done) {
+          _.extend(event, {
+            undo: false,
+            state: 'In Review'
+          });
+          viewModel.onStateChange(event);
+          refreshDfd.then(function () {
+            expect($fakeBody.trigger).toHaveBeenCalled();
+            done();
+          });
+        });
+
+        it('saves instance after all actions', function (done) {
+          viewModel.onStateChange(event);
+          refreshDfd.then(function () {
+            done();
+          });
+        });
+
+        describe('after resolving a save operation', function () {
+          beforeEach(function () {
+            spyOn(viewModel, 'initializeFormFields');
+            saveDfd.resolve();
+          });
+
+          it('sets isPending to false', function (done) {
+            viewModel.onStateChange(event);
+            saveDfd.then(function () {
+              instance.attr('isPending', false);
+              done();
+            });
+          });
+
+          it('initializes form fields', function (done) {
+            viewModel.onStateChange(event);
+            saveDfd.then(function () {
+              expect(viewModel.initializeFormFields).toHaveBeenCalled();
+              done();
+            });
+          });
+
+          it('resolves onStateChangeDfd', function (done) {
+            viewModel.onStateChange(event);
+            viewModel.attr('onStateChangeDfd').then(function () {
+              done();
+            });
+          });
         });
       });
     });
   });
 
   describe('saveGlobalAttributes method()', function () {
+    var event;
+    var saveDfd;
+    var CAUtils;
+    var instance;
 
+    beforeAll(function () {
+      CAUtils = GGRC.Utils.CustomAttributes;
+    });
+
+    beforeEach(function () {
+      saveDfd = can.Deferred();
+      instance = {
+        custom_attribute_values: [1, 2, 3],
+        save: jasmine.createSpy('save').and.returnValue(saveDfd)
+      };
+      event = {
+        globalAttributes: []
+      };
+      spyOn(CAUtils, 'applyChangesToCustomAttributeValue');
+      viewModel.attr({
+        instance: instance
+      });
+    });
+
+    it('calls applyChangesToCustomAttributeValue util for CA with' +
+    'instance.custom_attribute_values and event.globalAttributes', function () {
+      var globalAttrs = event.globalAttributes;
+      var caValues = viewModel.attr('instance.custom_attribute_values');
+
+      viewModel.saveGlobalAttributes(event);
+      expect(CAUtils.applyChangesToCustomAttributeValue)
+        .toHaveBeenCalledWith(
+          caValues,
+          globalAttrs
+        );
+    });
+
+    it('saves instance', function () {
+      viewModel.saveGlobalAttributes(event);
+      expect(instance.save).toHaveBeenCalled();
+    });
+
+    it('returns result of an instance saving', function () {
+      var result = viewModel.saveGlobalAttributes(event);
+      expect(result).toBe(saveDfd);
+    });
   });
 
   describe('showRequiredInfoModal method()', function () {
+    var event;
+    var modalPropName;
 
+    beforeEach(function () {
+      var field = new can.Map({
+        title: 'Perfect Title',
+        type: 'Perfect Type',
+        options: [],
+        value: {},
+        errorsMap: {
+          error1: true,
+          error2: false,
+          error3: false
+        }
+      });
+      modalPropName = 'modal';
+      event = {
+        field: field
+      };
+    });
+
+    it('works identity if data is passed with help event.field or field param',
+    function () {
+      var thoughtEvent;
+      var thoughtParam;
+
+      viewModel.showRequiredInfoModal(event);
+      thoughtEvent = viewModel.attr(modalPropName).serialize();
+      viewModel.removeAttr(modalPropName);
+
+      viewModel.showRequiredInfoModal({}, event.field);
+      thoughtParam = viewModel.attr(modalPropName).serialize();
+
+      expect(thoughtEvent).toEqual(thoughtParam);
+    });
+
+    it('calls can.batch.start before setting a modal', function () {
+
+    });
+
+    it('calls can.batch.stop after setting a modal', function () {
+
+    });
+
+    describe('sets modal.content namely', function () {
+      var field;
+      var getContent;
+
+      beforeAll(function () {
+        getContent = function (prop) {
+          return viewModel.attr(modalPropName
+            .concat('.content.')
+            .concat(prop)
+          );
+        };
+      });
+
+      beforeEach(function () {
+        field = event.field;
+      });
+
+      it('sets "options" field', function () {
+        var prop = 'options';
+        var expectedResult = field.attr(prop);
+
+        viewModel.showRequiredInfoModal(event);
+
+        expect(getContent(prop)).toBe(expectedResult);
+      });
+
+      it('sets "contextScope" field', function () {
+        var prop = 'contextScope';
+        var expectedResult = field;
+        viewModel.showRequiredInfoModal(event);
+        expect(getContent(prop)).toBe(expectedResult);
+      });
+
+      it('sets "fields" field', function () {
+        var prop = 'fields';
+        var errors = event.field.errorsMap;
+        var expectedResult = can.Map.keys(errors)
+          .map(function (error) {
+            return errors[error] ? error : null;
+          })
+          .filter(function (errorCode) {
+            return !!errorCode;
+          });
+        var result;
+
+        viewModel.showRequiredInfoModal(event);
+        result = getContent(prop).serialize();
+
+        expect(result).toEqual(expectedResult);
+      });
+
+      it('sets "value" field', function () {
+        var prop = 'value';
+        var expectedResult = field.attr(prop);
+        viewModel.showRequiredInfoModal(event);
+        expect(getContent(prop)).toBe(expectedResult);
+      });
+
+      it('sets "title" field', function () {
+        var prop = 'title';
+        var expectedResult = field.attr(prop);
+        viewModel.showRequiredInfoModal(event);
+        expect(getContent(prop)).toBe(expectedResult);
+      });
+
+      it('sets "type" field', function () {
+        var prop = 'type';
+        var expectedResult = field.attr(prop);
+        viewModel.showRequiredInfoModal(event);
+        expect(getContent(prop)).toBe(expectedResult);
+      });
+    });
+
+    describe('sets modal.modalTitle namely', function () {
+      var errorsMap;
+      var join;
+
+      beforeEach(function () {
+        errorsMap = event.field.attr('errorsMap');
+        join = ' and ';
+      });
+
+      it('sets "Required" title if there are no errors', function () {
+        var expectedResult = 'Required ';
+
+        errorsMap.attr([], true);
+        viewModel.showRequiredInfoModal(event);
+
+        expect(viewModel.attr('modal.modalTitle')).toBe(expectedResult);
+      });
+
+      it('sets title to "Required {<capitalized requrement from errors map>}"' +
+      'if filtered errors map has only one item', function () {
+        var map = {error: true};
+        var errorKey = _.keys(map)[0];
+        var expectedResult = 'Required ' + can.capitalize(errorKey);
+
+        errorsMap.attr(map, true);
+        viewModel.showRequiredInfoModal(event);
+
+        expect(viewModel.attr('modal.modalTitle')).toBe(expectedResult);
+      });
+
+      it('sets title to "Required {<capitalized requirements separated by ' +
+      '" and " string>}" if filtered errors map has several items',
+      function () {
+        var expectedResult = 'Required ' + can.Map.keys(errorsMap)
+          .map(function (error) {
+            return errorsMap[error] ? error : null;
+          })
+          .filter(Boolean)
+          .map(can.capitalize)
+          .join(join);
+
+        viewModel.showRequiredInfoModal(event);
+
+        expect(viewModel.attr('modal.modalTitle')).toBe(expectedResult);
+      });
+    });
+
+    describe('sets modal.state', function () {
+
+    });
   });
 
   describe('init method()', function () {
