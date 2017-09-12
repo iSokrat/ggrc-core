@@ -3,18 +3,26 @@
   Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
 
-var component = 'assessmentInfoPane';
-var componentTestName = 'GGRC.Components.' + component;
-
-describe(componentTestName + ' viewModel', function () {
+var window = window;
+console.log(window)
+describe('GGRC.Components.assessmentInfoPane', function () {
   'use strict';
   var viewModel;
+  var fakeComponent;
+  var componentProto;
 
-  beforeEach(function () {
-    viewModel = GGRC.Components.getViewModel(component);
+  beforeAll(function () {
+    componentProto = GGRC.Components.get('assessmentInfoPane').prototype;
   });
 
-  describe('setUrlEditMode method', function () {
+  beforeEach(function () {
+    viewModel = GGRC.Components.getViewModel('assessmentInfoPane');
+    fakeComponent = {
+      viewModel: viewModel
+    };
+  });
+
+  describe('setUrlEditMode() method', function () {
     it('sets value for VM attribute based on type', function () {
       var type = 'Type';
       var value = {data: 'Important data'};
@@ -29,7 +37,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('setInProgressState method', function () {
+  describe('setInProgressState() method', function () {
     beforeEach(function () {
       spyOn(viewModel, 'onStateChange');
     });
@@ -43,7 +51,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('getQuery method', function () {
+  describe('getQuery() method', function () {
     var buildParam;
 
     beforeEach(function () {
@@ -157,7 +165,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('getCommentQuery method', function () {
+  describe('getCommentQuery() method', function () {
     beforeEach(function () {
       spyOn(viewModel, 'getQuery');
     });
@@ -185,7 +193,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('getSnapshotQuery method', function () {
+  describe('getSnapshotQuery() method', function () {
     beforeEach(function () {
       spyOn(viewModel, 'getQuery');
     });
@@ -207,7 +215,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('getDocumentQuery method', function () {
+  describe('getDocumentQuery() method', function () {
     beforeEach(function () {
       spyOn(viewModel, 'getQuery');
       spyOn(viewModel, 'getDocumentAdditionFilter');
@@ -250,7 +258,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('requestQuery method', function () {
+  describe('requestQuery() method', function () {
     var origBatchRequests;
 
     beforeAll(function () {
@@ -368,7 +376,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('loadSnapshots method', function () {
+  describe('loadSnapshots() method', function () {
     var query;
     var requestResult;
 
@@ -391,7 +399,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('loadComments method', function () {
+  describe('loadComments() method', function () {
     var query;
     var requestResult;
 
@@ -415,7 +423,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('loadEvidences method', function () {
+  describe('loadEvidences() method', function () {
     var query;
     var requestResult;
 
@@ -450,7 +458,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('loadUrls method', function () {
+  describe('loadUrls() method', function () {
     var query;
     var requestResult;
 
@@ -485,7 +493,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('loadReferenceUrls method', function () {
+  describe('loadReferenceUrls() method', function () {
     var query;
     var requestResult;
 
@@ -520,7 +528,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('updateItems method', function () {
+  describe('updateItems() method', function () {
     var types;
     var loadedData;
 
@@ -570,7 +578,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('afterCreate method', function () {
+  describe('afterCreate() method', function () {
     var items;
     var event;
     var type;
@@ -687,7 +695,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('addItems method', function () {
+  describe('addItems() method', function () {
     var type;
     var event;
 
@@ -735,7 +743,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('getDocumentAdditionFilter method', function () {
+  describe('getDocumentAdditionFilter() method', function () {
     it('configures filter based on passed type', function () {
       var documentType = 'Type';
       var expectedResult = {
@@ -755,7 +763,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('addAction method', function () {
+  describe('addAction() method', function () {
     var actionType;
     var related;
     var actionsRoot;
@@ -802,7 +810,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('addRelatedItem method', function () {
+  describe('addRelatedItem() method', function () {
     var assessment;
     var event;
     var type;
@@ -928,7 +936,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('removeRelatedItem method', function () {
+  describe('removeRelatedItem() method', function () {
     var dfd;
     var type;
     var item;
@@ -1074,7 +1082,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('updateRelatedItems method', function () {
+  describe('updateRelatedItems() method', function () {
     var results;
 
     beforeEach(function () {
@@ -1168,7 +1176,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('initializeFormFields method', function () {
+  describe('initializeFormFields() method', function () {
     var CAUtils;
     var results;
 
@@ -1211,7 +1219,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('initGlobalAttributes method', function () {
+  describe('initGlobalAttributes() method', function () {
     var CAUtils;
     var results;
 
@@ -1255,7 +1263,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('initializeDeferredSave method', function () {
+  describe('initializeDeferredSave() method', function () {
     beforeEach(function () {
       viewModel.attr('deferredSave', {});
     });
@@ -1353,7 +1361,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('onStateChange method', function () {
+  describe('onStateChange() method', function () {
     var event;
     var instance;
     var formSavedDfd;
@@ -1436,12 +1444,11 @@ describe(componentTestName + ' viewModel', function () {
           $fakeBody = {
             trigger: jasmine.createSpy('trigger')
           };
-
           spyOn(window, '$').and.returnValue($fakeBody);
         });
 
-        it('sets instance status to previous status if event.undo is true and ' +
-        'previous status is not empty', function (done) {
+        it('sets instance status to previous status if event.undo is true ' +
+        'and previous status is not empty', function (done) {
           var expectedResult = instance.attr('previousStatus');
           viewModel.onStateChange(event);
           refreshDfd.then(function () {
@@ -1472,23 +1479,18 @@ describe(componentTestName + ' viewModel', function () {
         });
 
         it('triggers flash hint message event if event.undo is false and ' +
-        'instance status is "In Review"', function (done) {
+        'instance status is "In Review"', function () {
           _.extend(event, {
             undo: false,
             state: 'In Review'
           });
           viewModel.onStateChange(event);
-          refreshDfd.then(function () {
-            expect($fakeBody.trigger).toHaveBeenCalled();
-            done();
-          });
+          expect($fakeBody.trigger).toHaveBeenCalled();
         });
 
         it('saves instance after all actions', function (done) {
           viewModel.onStateChange(event);
-          refreshDfd.then(function () {
-            done();
-          });
+          refreshDfd.then(done);
         });
 
         describe('after resolving a save operation', function () {
@@ -1524,7 +1526,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('saveGlobalAttributes method', function () {
+  describe('saveGlobalAttributes() method', function () {
     var event;
     var saveDfd;
     var CAUtils;
@@ -1573,7 +1575,7 @@ describe(componentTestName + ' viewModel', function () {
     });
   });
 
-  describe('showRequiredInfoModal method', function () {
+  describe('showRequiredInfoModal() method', function () {
     var event;
     var getModal;
 
@@ -1765,68 +1767,69 @@ describe(componentTestName + ' viewModel', function () {
       });
     });
   });
-});
 
-describe(componentTestName, function () {
-  'use strict';
+  describe('extraClass() helper method', function () {
+    var helper;
 
-  var componentProto;
-  var originalViewModel;
-  var viewModel;
+    beforeEach(function () {
+      helper = componentProto.helpers.extraClass.bind(viewModel);
+    });
 
-  beforeAll(function () {
-    componentProto = GGRC.Components.get(component).prototype;
-    originalViewModel = componentProto.viewModel;
+    it('returns "inline-reverse" string if passed type function returns ' +
+    'checkbox string', function () {
+      var expectedResult = 'inline-reverse';
+      var result = helper(_.constant('checkbox'));
+      expect(result).toBe(expectedResult);
+    });
+
+    it('returns empty string if passed type function returns unknown string',
+    function () {
+      var expectedResult = '';
+      var result = helper(_.constant('unknownType'));
+      expect(result).toBe(expectedResult);
+    });
   });
 
-  afterAll(function () {
-    componentProto.viewModel = originalViewModel;
-  });
-
-  beforeEach(function () {
-    componentProto.viewModel = GGRC.Components.getViewModel(component);
-    viewModel = componentProto.viewModel;
-  });
-
-  describe('init method', function () {
+  describe('init() method', function () {
     var init;
 
     beforeEach(function () {
-      init = componentProto.init.bind(componentProto);
+      init = componentProto.init.bind(fakeComponent);
+      spyOn(viewModel, 'initializeFormFields');
+      spyOn(viewModel, 'initGlobalAttributes');
+      spyOn(viewModel, 'updateRelatedItems');
+      spyOn(viewModel, 'initializeDeferredSave');
     });
 
     it('calls viewModel.initializeFormFields method', function () {
-      spyOn(viewModel, 'initializeFormFields');
       init();
       expect(viewModel.initializeFormFields).toHaveBeenCalled();
     });
 
     it('calls viewModel.initGlobalAttributes method', function () {
-      spyOn(viewModel, 'initGlobalAttributes');
       init();
       expect(viewModel.initGlobalAttributes).toHaveBeenCalled();
     });
 
     it('calls viewModel.updateRelatedItems method', function () {
-      spyOn(viewModel, 'updateRelatedItems');
       init();
       expect(viewModel.updateRelatedItems).toHaveBeenCalled();
     });
 
     it('calls initializeDeferredSave method', function () {
-      spyOn(viewModel, 'initializeDeferredSave');
       init();
       expect(viewModel.initializeDeferredSave).toHaveBeenCalled();
     });
   });
 
-  describe('{viewModel.instance} refreshMapping event handler()', function () {
+  describe('"{viewModel.instance} refreshMapping"() event handler',
+  function () {
     var event;
     var snapshots;
 
     beforeEach(function () {
       var eventName = '{viewModel.instance} refreshMapping';
-      event = componentProto.events[eventName].bind(componentProto);
+      event = componentProto.events[eventName].bind(fakeComponent);
       snapshots = {
         data: 'Important data'
       };
@@ -1847,12 +1850,13 @@ describe(componentTestName, function () {
     });
   });
 
-  describe('{viewModel.instance} modelBeforeSave event handler()', function () {
+  describe('"{viewModel.instance} modelBeforeSave"() event handler',
+  function () {
     var event;
 
     beforeEach(function () {
       var eventName = '{viewModel.instance} modelBeforeSave';
-      event = componentProto.events[eventName].bind(componentProto);
+      event = componentProto.events[eventName].bind(fakeComponent);
     });
 
     it('sets viewModel.isAssessmentSaving to true', function () {
@@ -1863,12 +1867,13 @@ describe(componentTestName, function () {
     });
   });
 
-  describe('{viewModel.instance} modelAfterSave event handler()', function () {
+  describe('"{viewModel.instance} modelAfterSave"() event handler',
+  function () {
     var event;
 
     beforeEach(function () {
       var eventName = '{viewModel.instance} modelAfterSave';
-      event = componentProto.events[eventName].bind(componentProto);
+      event = componentProto.events[eventName].bind(fakeComponent);
     });
 
     it('sets viewModel.isAssessmentSaving to false', function () {
@@ -1879,68 +1884,46 @@ describe(componentTestName, function () {
     });
   });
 
-  describe('{viewModel} instance event handler()', function () {
+  describe('"{viewModel} instance"() event handler', function () {
     var event;
 
     beforeEach(function () {
       var eventName = '{viewModel} instance';
-      event = componentProto.events[eventName].bind(componentProto);
+      event = componentProto.events[eventName].bind(fakeComponent);
+      spyOn(viewModel, 'initializeFormFields');
+      spyOn(viewModel, 'initGlobalAttributes');
+      spyOn(viewModel, 'updateRelatedItems');
     });
 
     it('calls viewModel.initializeFormFields method', function () {
-      spyOn(viewModel, 'initializeFormFields');
       event();
       expect(viewModel.initializeFormFields).toHaveBeenCalled();
     });
 
     it('calls viewModel.initGlobalAttributes method', function () {
-      spyOn(viewModel, 'initGlobalAttributes');
       event();
       expect(viewModel.initGlobalAttributes).toHaveBeenCalled();
     });
 
     it('calls viewModel.updateRelatedItems method', function () {
-      spyOn(viewModel, 'updateRelatedItems');
       event();
       expect(viewModel.updateRelatedItems).toHaveBeenCalled();
     });
   });
 
-  describe('{viewModel.instance} resolvePendingBindings event handler()',
+  describe('"{viewModel.instance} resolvePendingBindings"() event handler',
   function () {
     var event;
 
     beforeEach(function () {
       var eventName = '{viewModel.instance} resolvePendingBindings';
-      event = componentProto.events[eventName].bind(componentProto);
+      event = componentProto.events[eventName].bind(fakeComponent);
     });
 
     it('calls viewModel.updateItems with "referenceUrls" param', function () {
       spyOn(viewModel, 'updateItems');
       event();
       expect(viewModel.updateItems).toHaveBeenCalledWith('referenceUrls');
-    });
-  });
-
-  describe('extraClass helper method', function () {
-    var helper;
-
-    beforeEach(function () {
-      helper = componentProto.helpers.extraClass.bind(componentProto);
-    });
-
-    it('returns "inline-reverse" string if passed type function returns ' +
-    'checkbox string', function () {
-      var expectedResult = 'inline-reverse';
-      var result = helper(_.constant('checkbox'));
-      expect(result).toBe(expectedResult);
-    });
-
-    it('returns empty string if passed type function returns unknown string',
-    function () {
-      var expectedResult = '';
-      var result = helper(_.constant('unknownType'));
-      expect(result).toBe(expectedResult);
     });
   });
 });
