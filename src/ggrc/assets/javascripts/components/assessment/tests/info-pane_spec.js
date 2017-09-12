@@ -3,15 +3,18 @@
   Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
 
-describe('GGRC.Components.assessmentInfoPane', function () {
+var component = 'assessmentInfoPane';
+var componentTestName = 'GGRC.Components.' + component;
+
+describe(componentTestName + ' viewModel', function () {
   'use strict';
   var viewModel;
 
   beforeEach(function () {
-    viewModel = GGRC.Components.getViewModel('assessmentInfoPane');
+    viewModel = GGRC.Components.getViewModel(component);
   });
 
-  describe('setUrlEditMode method()', function () {
+  describe('setUrlEditMode method', function () {
     it('sets value for VM attribute based on type', function () {
       var type = 'Type';
       var value = {data: 'Important data'};
@@ -26,7 +29,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('setInProgressState method()', function () {
+  describe('setInProgressState method', function () {
     beforeEach(function () {
       spyOn(viewModel, 'onStateChange');
     });
@@ -40,7 +43,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('getQuery method()', function () {
+  describe('getQuery method', function () {
     var buildParam;
 
     beforeEach(function () {
@@ -154,7 +157,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('getCommentQuery method()', function () {
+  describe('getCommentQuery method', function () {
     beforeEach(function () {
       spyOn(viewModel, 'getQuery');
     });
@@ -182,7 +185,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('getSnapshotQuery method()', function () {
+  describe('getSnapshotQuery method', function () {
     beforeEach(function () {
       spyOn(viewModel, 'getQuery');
     });
@@ -204,7 +207,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('getDocumentQuery method()', function () {
+  describe('getDocumentQuery method', function () {
     beforeEach(function () {
       spyOn(viewModel, 'getQuery');
       spyOn(viewModel, 'getDocumentAdditionFilter');
@@ -247,7 +250,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('requestQuery method()', function () {
+  describe('requestQuery method', function () {
     var origBatchRequests;
 
     beforeAll(function () {
@@ -365,7 +368,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('loadSnapshots method()', function () {
+  describe('loadSnapshots method', function () {
     var query;
     var requestResult;
 
@@ -388,7 +391,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('loadComments method()', function () {
+  describe('loadComments method', function () {
     var query;
     var requestResult;
 
@@ -412,7 +415,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('loadEvidences method()', function () {
+  describe('loadEvidences method', function () {
     var query;
     var requestResult;
 
@@ -447,7 +450,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('loadUrls method()', function () {
+  describe('loadUrls method', function () {
     var query;
     var requestResult;
 
@@ -482,7 +485,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('loadReferenceUrls method()', function () {
+  describe('loadReferenceUrls method', function () {
     var query;
     var requestResult;
 
@@ -517,7 +520,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('updateItems method()', function () {
+  describe('updateItems method', function () {
     var types;
     var loadedData;
 
@@ -567,7 +570,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('afterCreate method()', function () {
+  describe('afterCreate method', function () {
     var items;
     var event;
     var type;
@@ -684,7 +687,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('addItems method()', function () {
+  describe('addItems method', function () {
     var type;
     var event;
 
@@ -732,7 +735,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('getDocumentAdditionFilter method()', function () {
+  describe('getDocumentAdditionFilter method', function () {
     it('configures filter based on passed type', function () {
       var documentType = 'Type';
       var expectedResult = {
@@ -752,7 +755,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('addAction method()', function () {
+  describe('addAction method', function () {
     var actionType;
     var related;
     var actionsRoot;
@@ -799,7 +802,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('addRelatedItem method()', function () {
+  describe('addRelatedItem method', function () {
     var assessment;
     var event;
     var type;
@@ -925,7 +928,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('removeRelatedItem method()', function () {
+  describe('removeRelatedItem method', function () {
     var dfd;
     var type;
     var item;
@@ -1071,7 +1074,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('updateRelatedItems method()', function () {
+  describe('updateRelatedItems method', function () {
     var results;
 
     beforeEach(function () {
@@ -1165,7 +1168,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('initializeFormFields method()', function () {
+  describe('initializeFormFields method', function () {
     var CAUtils;
     var results;
 
@@ -1208,7 +1211,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('initGlobalAttributes method()', function () {
+  describe('initGlobalAttributes method', function () {
     var CAUtils;
     var results;
 
@@ -1252,7 +1255,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('initializeDeferredSave method()', function () {
+  describe('initializeDeferredSave method', function () {
     beforeEach(function () {
       viewModel.attr('deferredSave', {});
     });
@@ -1350,7 +1353,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('onStateChange method()', function () {
+  describe('onStateChange method', function () {
     var event;
     var instance;
     var formSavedDfd;
@@ -1521,7 +1524,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('saveGlobalAttributes method()', function () {
+  describe('saveGlobalAttributes method', function () {
     var event;
     var saveDfd;
     var CAUtils;
@@ -1570,9 +1573,20 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     });
   });
 
-  describe('showRequiredInfoModal method()', function () {
+  describe('showRequiredInfoModal method', function () {
     var event;
-    var modalPropName;
+    var getModal;
+
+    beforeAll(function () {
+      getModal = function (propArray) {
+        var propName = 'modal';
+        var joined = [propName].concat(propArray);
+        var flattenPropArray = _.flow(_.flattenDeep, _.compact)(joined);
+        var resultPath = flattenPropArray.join('.');
+
+        return viewModel.attr(resultPath);
+      };
+    });
 
     beforeEach(function () {
       var field = new can.Map({
@@ -1586,7 +1600,6 @@ describe('GGRC.Components.assessmentInfoPane', function () {
           error3: false
         }
       });
-      modalPropName = 'modal';
       event = {
         field: field
       };
@@ -1598,21 +1611,12 @@ describe('GGRC.Components.assessmentInfoPane', function () {
       var thoughtParam;
 
       viewModel.showRequiredInfoModal(event);
-      thoughtEvent = viewModel.attr(modalPropName).serialize();
-      viewModel.removeAttr(modalPropName);
+      thoughtEvent = getModal().serialize();
+      getModal().attr(null, true);
 
-      viewModel.showRequiredInfoModal({}, event.field);
-      thoughtParam = viewModel.attr(modalPropName).serialize();
-
+      viewModel.showRequiredInfoModal(null, event.field);
+      thoughtParam = getModal().serialize();
       expect(thoughtEvent).toEqual(thoughtParam);
-    });
-
-    it('calls can.batch.start before setting a modal', function () {
-
-    });
-
-    it('calls can.batch.stop after setting a modal', function () {
-
     });
 
     describe('sets modal.content namely', function () {
@@ -1621,10 +1625,11 @@ describe('GGRC.Components.assessmentInfoPane', function () {
 
       beforeAll(function () {
         getContent = function (prop) {
-          return viewModel.attr(modalPropName
-            .concat('.content.')
-            .concat(prop)
-          );
+          var propName = 'content';
+          return getModal([
+            propName,
+            prop
+          ]);
         };
       });
 
@@ -1635,9 +1640,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
       it('sets "options" field', function () {
         var prop = 'options';
         var expectedResult = field.attr(prop);
-
         viewModel.showRequiredInfoModal(event);
-
         expect(getContent(prop)).toBe(expectedResult);
       });
 
@@ -1691,6 +1694,17 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     describe('sets modal.modalTitle namely', function () {
       var errorsMap;
       var join;
+      var getModalTitle;
+
+      beforeAll(function () {
+        getModalTitle = function (prop) {
+          var propName = 'modalTitle';
+          return getModal([
+            propName,
+            prop
+          ]);
+        };
+      });
 
       beforeEach(function () {
         errorsMap = event.field.attr('errorsMap');
@@ -1703,7 +1717,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
         errorsMap.attr([], true);
         viewModel.showRequiredInfoModal(event);
 
-        expect(viewModel.attr('modal.modalTitle')).toBe(expectedResult);
+        expect(getModalTitle()).toBe(expectedResult);
       });
 
       it('sets title to "Required {<capitalized requrement from errors map>}"' +
@@ -1715,7 +1729,7 @@ describe('GGRC.Components.assessmentInfoPane', function () {
         errorsMap.attr(map, true);
         viewModel.showRequiredInfoModal(event);
 
-        expect(viewModel.attr('modal.modalTitle')).toBe(expectedResult);
+        expect(getModalTitle()).toBe(expectedResult);
       });
 
       it('sets title to "Required {<capitalized requirements separated by ' +
@@ -1731,28 +1745,202 @@ describe('GGRC.Components.assessmentInfoPane', function () {
 
         viewModel.showRequiredInfoModal(event);
 
-        expect(viewModel.attr('modal.modalTitle')).toBe(expectedResult);
+        expect(getModalTitle()).toBe(expectedResult);
       });
     });
 
-    describe('sets modal.state', function () {
+    describe('sets modal.state namely', function () {
+      var getState;
 
+      beforeAll(function () {
+        getState = function (propArray) {
+          var propName = 'state';
+          return getModal([propName, propArray]);
+        };
+      });
+
+      it('sets "open" field to true', function () {
+        viewModel.showRequiredInfoModal(event);
+        expect(getState('open')).toBe(true);
+      });
+    });
+  });
+});
+
+describe(componentTestName, function () {
+  'use strict';
+
+  var componentProto;
+  var originalViewModel;
+  var viewModel;
+
+  beforeAll(function () {
+    componentProto = GGRC.Components.get(component).prototype;
+    originalViewModel = componentProto.viewModel;
+  });
+
+  afterAll(function () {
+    componentProto.viewModel = originalViewModel;
+  });
+
+  beforeEach(function () {
+    componentProto.viewModel = GGRC.Components.getViewModel(component);
+    viewModel = componentProto.viewModel;
+  });
+
+  describe('init method', function () {
+    var init;
+
+    beforeEach(function () {
+      init = componentProto.init.bind(componentProto);
+    });
+
+    it('calls viewModel.initializeFormFields method', function () {
+      spyOn(viewModel, 'initializeFormFields');
+      init();
+      expect(viewModel.initializeFormFields).toHaveBeenCalled();
+    });
+
+    it('calls viewModel.initGlobalAttributes method', function () {
+      spyOn(viewModel, 'initGlobalAttributes');
+      init();
+      expect(viewModel.initGlobalAttributes).toHaveBeenCalled();
+    });
+
+    it('calls viewModel.updateRelatedItems method', function () {
+      spyOn(viewModel, 'updateRelatedItems');
+      init();
+      expect(viewModel.updateRelatedItems).toHaveBeenCalled();
+    });
+
+    it('calls initializeDeferredSave method', function () {
+      spyOn(viewModel, 'initializeDeferredSave');
+      init();
+      expect(viewModel.initializeDeferredSave).toHaveBeenCalled();
     });
   });
 
-  describe('init method()', function () {
+  describe('{viewModel.instance} refreshMapping event handler()', function () {
+    var event;
+    var snapshots;
 
+    beforeEach(function () {
+      var eventName = '{viewModel.instance} refreshMapping';
+      event = componentProto.events[eventName].bind(componentProto);
+      snapshots = {
+        data: 'Important data'
+      };
+      spyOn(viewModel, 'loadSnapshots').and.returnValue(snapshots);
+    });
+
+    it('loads snapshots with help viewModel.loadSnapshots method ',
+    function () {
+      event();
+      expect(viewModel.loadSnapshots).toHaveBeenCalled();
+    });
+
+    it('sets viewModel.mappedSnapshots field to loaded snapshots', function () {
+      var result;
+      event();
+      result = viewModel.attr('mappedSnapshots').serialize();
+      expect(result).toEqual([snapshots]);
+    });
   });
 
-  describe(' method()', function () {
+  describe('{viewModel.instance} modelBeforeSave event handler()', function () {
+    var event;
 
+    beforeEach(function () {
+      var eventName = '{viewModel.instance} modelBeforeSave';
+      event = componentProto.events[eventName].bind(componentProto);
+    });
+
+    it('sets viewModel.isAssessmentSaving to true', function () {
+      var result;
+      event();
+      result = viewModel.attr('isAssessmentSaving');
+      expect(result).toBe(true);
+    });
   });
 
-  describe(' method()', function () {
+  describe('{viewModel.instance} modelAfterSave event handler()', function () {
+    var event;
 
+    beforeEach(function () {
+      var eventName = '{viewModel.instance} modelAfterSave';
+      event = componentProto.events[eventName].bind(componentProto);
+    });
+
+    it('sets viewModel.isAssessmentSaving to false', function () {
+      var result;
+      event();
+      result = viewModel.attr('isAssessmentSaving');
+      expect(result).toBe(false);
+    });
   });
 
-  describe(' method()', function () {
+  describe('{viewModel} instance event handler()', function () {
+    var event;
 
+    beforeEach(function () {
+      var eventName = '{viewModel} instance';
+      event = componentProto.events[eventName].bind(componentProto);
+    });
+
+    it('calls viewModel.initializeFormFields method', function () {
+      spyOn(viewModel, 'initializeFormFields');
+      event();
+      expect(viewModel.initializeFormFields).toHaveBeenCalled();
+    });
+
+    it('calls viewModel.initGlobalAttributes method', function () {
+      spyOn(viewModel, 'initGlobalAttributes');
+      event();
+      expect(viewModel.initGlobalAttributes).toHaveBeenCalled();
+    });
+
+    it('calls viewModel.updateRelatedItems method', function () {
+      spyOn(viewModel, 'updateRelatedItems');
+      event();
+      expect(viewModel.updateRelatedItems).toHaveBeenCalled();
+    });
+  });
+
+  describe('{viewModel.instance} resolvePendingBindings event handler()',
+  function () {
+    var event;
+
+    beforeEach(function () {
+      var eventName = '{viewModel.instance} resolvePendingBindings';
+      event = componentProto.events[eventName].bind(componentProto);
+    });
+
+    it('calls viewModel.updateItems with "referenceUrls" param', function () {
+      spyOn(viewModel, 'updateItems');
+      event();
+      expect(viewModel.updateItems).toHaveBeenCalledWith('referenceUrls');
+    });
+  });
+
+  describe('extraClass helper method', function () {
+    var helper;
+
+    beforeEach(function () {
+      helper = componentProto.helpers.extraClass.bind(componentProto);
+    });
+
+    it('returns "inline-reverse" string if passed type function returns ' +
+    'checkbox string', function () {
+      var expectedResult = 'inline-reverse';
+      var result = helper(_.constant('checkbox'));
+      expect(result).toBe(expectedResult);
+    });
+
+    it('returns empty string if passed type function returns unknown string',
+    function () {
+      var expectedResult = '';
+      var result = helper(_.constant('unknownType'));
+      expect(result).toBe(expectedResult);
+    });
   });
 });
