@@ -93,4 +93,61 @@ describe('GGRC.Components.attachButton', function () {
       expect(result.state()).toBe('rejected');
     });
   });
+
+  describe('checkFolder() method', function () {
+    describe('when result of findFolder method was resolved', function () {
+      it('sets isFolderAttached field for viewModel to true if a folder ' +
+      'was arrived', function () {
+        var dfd = can.Deferred().resolve({});
+
+        spyOn(viewModel, 'findFolder').and.returnValue(dfd);
+        viewModel.checkFolder();
+
+        expect(viewModel.attr('isFolderAttached')).toBe(true);
+      });
+
+      it('sets canAttach field for viewModel to true', function () {
+        var dfd = can.Deferred().resolve();
+
+        spyOn(viewModel, 'findFolder').and.returnValue(dfd);
+        viewModel.checkFolder();
+
+        expect(viewModel.attr('canAttach')).toBe(true);
+      });
+    });
+
+    describe('when result of findFolder method was rejected', function () {
+      it('sets error field for viewModel to error which was catched',
+      function () {
+        var error = new Error('Error');
+        var dfd = can.Deferred().reject(error);
+
+        spyOn(viewModel, 'findFolder').and.returnValue(dfd);
+        viewModel.checkFolder();
+
+        expect(viewModel.attr('error')).toBe(error);
+      });
+
+      it('sets canAttach field for viewModel to false', function () {
+        var dfd = can.Deferred().reject();
+
+        spyOn(viewModel, 'findFolder').and.returnValue(dfd);
+        viewModel.checkFolder();
+
+        expect(viewModel.attr('canAttach')).toBe(false);
+      });
+    });
+
+    describe('when result of findFolder method was rejected or resolved',
+    function () {
+      it('checks checksPassed field for viewModel to false', function () {
+        var dfd = can.Deferred().resolve();
+
+        spyOn(viewModel, 'findFolder').and.returnValue(dfd);
+        viewModel.checkFolder();
+
+        expect(viewModel.attr('checksPassed')).toBe(true);
+      });
+    });
+  });
 });

@@ -193,4 +193,51 @@ describe('GGRC.Component.assessmentMappedControl', function () {
           .toEqual(0);
       });
   });
+
+  describe('getParams() method', function () {
+    var queries;
+
+    beforeEach(function () {
+      queries = [{
+        objName: 'object name 1',
+        fields: ['field1', 'field2']
+      }, {
+        objName: 'object name 2',
+        fields: ['field3', 'field4']
+      }];
+      viewModel.attr('queries', queries);
+    });
+
+    it('returns object with "data" field which has array type', function () {
+      var result = viewModel.getParams();
+      expect(result.data).toEqual(jasmine.any(Array));
+    });
+
+    describe('returned "data" field', function () {
+      it('has "Snapshot" object name', function () {
+        var result = viewModel.getParams();
+        expect(_.every(result.data, 'object_name', 'Snapshot')).toBe(true);
+      });
+
+      it('has appopriate "fields" field from queries array', function () {
+        var result = viewModel.getParams();
+        var i;
+        for (i = 0; i < result.data.lenght; i++) {
+          expect(result[i].fields).toBe(queries[i].fields);
+        }
+      });
+
+      it('has filters.expression.right.ids strings equal to passed ids ' +
+      'converted to strings',
+      function () {
+        var ids = [1, 2, 3];
+        var result = viewModel.getParams(ids);
+        var idsPath = 'filters.expression.right.ids';
+        _.each(result.data, function (item) {
+          var transformedIds = _.get(item, idsPath);
+          expect(transformedIds).toEqual(_.map(ids, String));
+        });
+      });
+    });
+  });
 });
