@@ -2,6 +2,8 @@
   Copyright (C) 2017 Google Inc.
   Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
+import $ from 'jquery';
+
 /* eslint max-nested-callbacks:0 */
 describe('GGRC.Components.assessmentInfoPane', function () {
   'use strict';
@@ -167,7 +169,6 @@ describe('GGRC.Components.assessmentInfoPane', function () {
     beforeEach(function () {
       spyOn(viewModel, 'getQuery');
     });
-
     it('returns result of getQuery method', function () {
       var result;
       var fakeQuery = {};
@@ -1435,14 +1436,8 @@ describe('GGRC.Components.assessmentInfoPane', function () {
       });
 
       describe('after resolving a refresh operation', function () {
-        var $fakeBody;
-
         beforeEach(function () {
           refreshDfd.resolve();
-          $fakeBody = {
-            trigger: jasmine.createSpy('trigger')
-          };
-          spyOn(window, '$').and.returnValue($fakeBody);
         });
 
         it('sets instance status to previous status if event.undo is true ' +
@@ -1478,12 +1473,13 @@ describe('GGRC.Components.assessmentInfoPane', function () {
 
         it('triggers flash hint message event if event.undo is false and ' +
         'instance status is "In Review"', function () {
+          var trigger = spyOn($.prototype, 'trigger');
           _.extend(event, {
             undo: false,
             state: 'In Review'
           });
           viewModel.onStateChange(event);
-          expect($fakeBody.trigger).toHaveBeenCalled();
+          expect(trigger).toHaveBeenCalled();
         });
 
         it('saves instance after all actions', function (done) {
