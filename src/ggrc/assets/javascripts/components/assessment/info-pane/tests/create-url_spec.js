@@ -84,13 +84,19 @@ describe('GGRC.Components.createUrl', function () {
         ).toBe(viewModel.attr('context'));
       });
 
-      it('sets context to sets context to CMS.Models.Contexts instance ' +
+      it('sets context to sets context to CMS.Models.Context instance ' +
       'with id = null if context does not exist', function () {
-        var result = new CMS.Models.Context({id: null}).serialize();
+        var expectedContext = {
+          id: null
+        };
+        var result;
+
+        spyOn(CMS.Models, 'Context').and.returnValue(expectedContext);
         viewModel.create();
-        expect(
-          getFirstParam(CMS.Models.Document).context.serialize()
-        ).toEqual(result);
+        result = getFirstParam(CMS.Models.Document).context;
+
+        expect(CMS.Models.Context).toHaveBeenCalledWith(expectedContext);
+        expect(result).toBe(expectedContext);
       });
 
       it('sets document_type to type field value', function () {
