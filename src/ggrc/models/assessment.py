@@ -74,6 +74,10 @@ class Assessment(Roleable, statusable.Statusable, AuditRelationship,
   __tablename__ = 'assessments'
   _title_uniqueness = False
 
+  DEPRECATED = u"Deprecated"
+  DONE_STATES = statusable.Statusable.DONE_STATES | {DEPRECATED, }
+  VALID_STATES = tuple(statusable.Statusable.NOT_DONE_STATES | DONE_STATES)
+
   ASSIGNEE_TYPES = (u"Creator", u"Assessor", u"Verifier")
 
   REMINDERABLE_HANDLERS = {
