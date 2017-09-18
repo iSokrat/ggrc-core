@@ -135,3 +135,9 @@ class TestCTGOT(BaseTestCase):
 
     for ctask in all_models.CycleTaskGroupObjectTask.query.all():
       self.assertEqual(ctask.context_id, ctask_context_id)
+
+  def test_task_states(self):
+    self.assertEqual(
+        all_models.CycleTaskGroupObjectTask.NO_VALIDATION_STATES,
+        ["Assigned", "InProgress", "Finished", "Deprecated"]
+    )
