@@ -31,7 +31,7 @@
         models: ['Audit'],
         states: [
           'Planned', 'In Progress', 'Manager Review',
-          'Ready for External Review', 'Completed'
+          'Ready for External Review', 'Completed', 'Deprecated'
         ]
       },
       {
