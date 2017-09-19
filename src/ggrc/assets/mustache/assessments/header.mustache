@@ -118,6 +118,16 @@ Copyright (C) 2017 Google Inc.
                     {{/is_allowed}}
                     {{/if_in}}
 
+                    <li>
+                      <object-change-state
+                        title="Deprecate"
+                        to-state="Deprecated"
+                        {instance}="instance"
+                        (on-state-change)="onStateChange(%event)"
+                      >
+                      </object-change-state>
+                    </li>
+
                     {{#is_allowed 'delete' instance}}
                         {{^if instance.archived}}
                         <li>
