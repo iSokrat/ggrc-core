@@ -9,7 +9,7 @@ const viewModel = can.Map.extend({
   define: {
     title: {
       type: 'string',
-      value: '1',
+      value: '',
     },
     toState: {
       type: 'string',
