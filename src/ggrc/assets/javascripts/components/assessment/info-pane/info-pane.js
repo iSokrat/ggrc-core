@@ -4,7 +4,6 @@
  */
 
 import '../controls-toolbar/controls-toolbar';
-import '../../object-change-state/object-change-state';
 import '../assessment-local-ca';
 import '../../custom-attributes/custom-attributes';
 import '../../custom-attributes/custom-attributes-field';
