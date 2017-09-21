@@ -1,0 +1,19 @@
+{
+    "env": {
+        "production": {
+            "minified": true,
+            "comments": false
+        }
+    },
+    "presets": [
+        ["env", {
+            "targets": {
+                "browsers": ["last 3 Chrome versions"]
+            }
+        }]
+    ],
+    "plugins": [
+        "transform-runtime",
+        "syntax-dynamic-import"
+    ]
+}
