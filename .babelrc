@@ -2,7 +2,8 @@
     "env": {
         "production": {
             "minified": true,
-            "comments": false
+            "comments": false,
+            "compact": true
         }
     },
     "presets": ["env"],
