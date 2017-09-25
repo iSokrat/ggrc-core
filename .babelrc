@@ -6,9 +6,11 @@
             "compact": true
         }
     },
-    "presets": ["env"],
     "plugins": [
         "transform-runtime",
         "syntax-dynamic-import"
-    ]
+    ],
+    "presets": [["env", {
+        "debug": true
+    }]]
 }
