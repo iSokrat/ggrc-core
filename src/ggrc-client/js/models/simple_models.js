@@ -51,7 +51,6 @@
       directives: 'CMS.Models.Directive.stubs',
       controls: 'CMS.Models.Control.stubs',
       audits: 'CMS.Models.Audit.stubs',
-      custom_attribute_values: 'CMS.Models.CustomAttributeValue.stubs',
     },
     tree_view_options: {
       attr_view: GGRC.mustache_path + '/programs/tree-item-attr.mustache',
@@ -147,7 +146,6 @@
       related_sources: 'CMS.Models.Relationship.stubs',
       related_destinations: 'CMS.Models.Relationship.stubs',
       objective_objects: 'CMS.Models.ObjectObjective.stubs',
-      custom_attribute_values: 'CMS.Models.CustomAttributeValue.stubs',
     },
     tree_view_options: {
       attr_view: GGRC.mustache_path + '/objectives/tree-item-attr.mustache',
