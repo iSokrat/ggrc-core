@@ -4,10 +4,10 @@
 }}
 {{#each items}}
 <div class="ggrc-form-item">
-  <div class="ggrc-form-item__row {{#if caError}}field-failure{{/if}}">
-    <label for="form-field-{{id}}" class="form-label required-label ggrc-form-item__label">
+  <div class="ggrc-form-item__row {{#if validationState.hasEmptyMandatoryValue}}field-failure{{/if}}">
+    <label for="form-field-{{customAttributeId}}" class="form-label required-label ggrc-form-item__label">
       <span class="ggrc-form-item__label-text">{{title}}</span>
-      {{#if required}}
+      {{#if mandatory}}
 	<i class="fa fa-asterisk"></i>
       {{/if}}
     </label>
@@ -17,16 +17,16 @@
       </small>
     </div>
     <custom-attributes-field
-      {type}="type"
+      {type}="attributeType"
       {(value)}="value"
-      {field-id}="id"
+      {field-id}="customAttributeId"
       {placeholder}="placeholder"
-      {options}="options"
+      {options}="multiChoiceOptions"
       (value-changed)="updateGlobalAttribute(%event, %context)"
-      class="form-field__content {{extraClass type}}"
+      class="form-field__content {{extraClass attributeType}}"
     ></custom-attributes-field>
-    {{#if caError}}
-      <label class="help-inline warning">{{caError}}</label>
+    {{#if validationState.hasEmptyMandatoryValue}}
+      <div role="alert">{{errorMessage attributeType}}</div>
     {{/if}}
   </div>
 </div>
