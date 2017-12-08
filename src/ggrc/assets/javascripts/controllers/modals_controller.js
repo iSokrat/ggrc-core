@@ -327,16 +327,7 @@ export default can.Control({
     });
 
     return dfd.done(function () {
-      this.reset_form(function () {
-        if (instance) {
-          // Make sure custom attr validations/values are reset
-          if (instance.setup_custom_attributes &&
-            !(instance instanceof CMS.Models.Assessment)) {
-            instance.removeAttr('custom_attributes');
-            instance.setup_custom_attributes();
-          }
-        }
-      });
+      this.reset_form();
     }.bind(that));
   },
 

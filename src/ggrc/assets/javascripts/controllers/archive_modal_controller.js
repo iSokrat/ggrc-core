@@ -23,20 +23,11 @@ export default ModalsController({
       .then(function () {
         var instance = this.options.instance;
         instance.attr('archived', true);
-
-        // Need to be fixed via new API:
-        // saving with filled custom_attributes
-        // will cause 403 error
-        instance.removeAttr('custom_attributes');
         return this.options.instance.save();
       }.bind(this))
       .then(function () {
         var instance = this.options.instance;
-        var msg;
-
-        instance.setup_custom_attributes();
-
-        msg = instance.display_name() + ' archived successfully';
+        var msg = instance.display_name() + ' archived successfully';
         $(document.body).trigger('ajax:flash', {success: msg});
         if (this.element) {
           this.element.trigger('modal:success', instance);
