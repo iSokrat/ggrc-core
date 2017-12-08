@@ -7,7 +7,7 @@
  * The component is used to integrate separate autocomplete component
  * with some old pards of code which are working with autocomplete plugin
  * and controllers.
- * 
+ *
  * Generally it emulates autocomplete_select handlers from several controllers.
  */
 export default GGRC.Components('inlineAutocompleteWrapper', {
@@ -57,7 +57,7 @@ export default GGRC.Components('inlineAutocompleteWrapper', {
      */
     setCustomAttribute(item, cadId) {
       let instance = this.attr('instance');
-      instance._custom_attribute_map(cadId, item);
+      instance.customAttr(cadId, 'Person');
       this.updateTextValue(item);
     },
     /**
