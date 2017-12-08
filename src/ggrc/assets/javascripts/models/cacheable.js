@@ -3,6 +3,7 @@
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
 
+import CustomAttributeAccess from '../plugins/utils/custom-attribute/custom-attribute-access';
 import {
   isSnapshot,
   toObjects,
@@ -333,6 +334,15 @@ import RefreshQueue from './refresh_queue';
           GGRC.custom_attributable_types = [];
         }
         GGRC.custom_attributable_types.push(can.extend({}, this));
+
+        this.validate(
+          '_gca_valid',
+          function () {
+            if (!this._gca_valid) {
+              return 'Missing required global custom attribute';
+            }
+          }
+        );
       }
 
       // register this type as Roleable if applicable
@@ -801,6 +811,10 @@ import RefreshQueue from './refresh_queue';
       if (!this._pending_joins) {
         this.attr('_pending_joins', []);
       }
+
+      if (this.isCustomAttributable()) {
+        this._customAttributeAccess = new CustomAttributeAccess(this);
+      }
     },
     load_custom_attribute_definitions: function () {
       var definitions;
@@ -819,89 +833,36 @@ import RefreshQueue from './refresh_queue';
       }.bind(this));
       this.attr('custom_attribute_definitions', definitions);
     },
+    customAttr(...args) {
+      if (!this.isCustomAttributable()) {
+        throw Error('This type has not ability to set custom attribute value');
+      }
 
-  /**
-   * Setup the instance's custom attribute validations, and initialize their
-   * values, if necessary.
-   */
-    setup_custom_attributes: function () {
-      var self = this;
-      var key;
-
-    // Remove existing custom_attribute validations,
-    // some of them might have changed
-      for (key in this.class.validations) {
-        if (key.indexOf('custom_attributes.') === 0) {
-          delete this.class.validations[key];
+      switch (args.length) {
+        case 0: {
+          return this._getAllCustomAttr();
         }
-      }
-
-    // setup validators for custom attributes based on their definitions
-      can.each(this.custom_attribute_definitions, function (definition) {
-        if (definition.mandatory && !this.ignore_ca_errors) {
-          if (definition.attribute_type === 'Checkbox') {
-            self.class.validate('custom_attributes.' + definition.id,
-              function (val) {
-                return val ? '' : 'must be checked';
-              });
-          } else {
-            self.class.validateNonBlank('custom_attributes.' + definition.id);
-          }
+        case 1: {
+          return this._getCustomAttr(args[0]);
         }
-      }.bind(this));
-
-    // if necessary, initialize custom attributes' values on the instance
-      if (!this.custom_attributes) {
-        this.attr('custom_attributes', new can.Map());
-        can.each(this.custom_attribute_values, function (value) {
-          var def;
-          var attributeValue;
-          var object;
-          value = value.isStub ? value : value.reify();
-          def = _.find(this.custom_attribute_definitions, {
-            id: value.custom_attribute_id
-          });
-          if (def) {
-            if (def.attribute_type.startsWith('Map:')) {
-              object = value.attribute_object;
-              attributeValue = object.type + ':' + object.id;
-            } else {
-              attributeValue = value.attribute_value;
-            }
-            self.custom_attributes.attr(value.custom_attribute_id,
-                                      attributeValue);
-          }
-        }.bind(this));
-      }
-
-    // Due to the current lack on any information on sort order, just use the
-    // order the custom attributes were defined in.
-      function sortById(a, b) {
-        return a.id - b.id;
-      }
-      // Sort only if definitions were attached.
-      if (this.attr('custom_attribute_definitions')) {
-        this.attr('custom_attribute_definitions').sort(sortById);
+        case 2: {
+          this._setCustomAttr(...args);
+          break;
+        }
       }
     },
-
-    _custom_attribute_map: function (attrId, object) {
-      var definition;
-      attrId = Number(attrId); // coming from mustache this will be a string
-      definition = _.find(this.custom_attribute_definitions, {id: attrId});
-
-      if (!definition || !definition.attribute_type.startsWith('Map:')) {
-        return;
-      }
-      if (typeof object === 'string' && object.length > 0) {
-        return;
-      }
-      object = object.stub ? object.stub() : undefined;
-      if (object) {
-        this.custom_attributes.attr(attrId, object.type + ':' + object.id);
-      } else {
-        this.custom_attributes.attr(attrId, 'Person:None');
-      }
+    _getAllCustomAttr() {
+      return this._customAttributeAccess.read();
+    },
+    _getCustomAttr(arg) {
+      return this._customAttributeAccess.read(arg);
+    },
+    _setCustomAttr(caId, value) {
+      const change = {caId: Number(caId), value};
+      this._customAttributeAccess.write(change);
+    },
+    isCustomAttributable() {
+      return this.attr('class').is_custom_attributable;
     },
     computed_errors: function () {
       var errors = this.errors();
@@ -1110,8 +1071,8 @@ import RefreshQueue from './refresh_queue';
           serial[name] = can.map(val, function (v) {
             var isModel = v && can.isFunction(v.save);
             return isModel ?
-                   v.stub().serialize() :
-                   (v && v.serialize) ? v.serialize() : v;
+              v.stub().serialize() :
+              (v && v.serialize) ? v.serialize() : v;
           });
         } else if (!can.isFunction(val)) {
           if (this[name] && this[name].isComputed) {
