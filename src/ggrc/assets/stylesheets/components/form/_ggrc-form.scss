@@ -72,6 +72,14 @@
     margin-bottom: 20px;
     display: flex;
 
+    &.hidden {
+      display: none;
+    }
+
+    .field-hide {
+      margin-bottom: 3px;
+    }
+
     .ggrc-form-item__row {
       width: 100%;
     }
