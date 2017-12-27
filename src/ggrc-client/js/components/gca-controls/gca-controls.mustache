@@ -3,7 +3,7 @@
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
 {{#each items}}
-<div class="ggrc-form-item">
+<div class="ggrc-form-item {{#isHidable .}}hidable{{/isHidable}}">
   <div class="ggrc-form-item__row {{#if validationState.hasEmptyMandatoryValue}}field-failure{{/if}}">
     <label for="form-field-{{customAttributeId}}" class="form-label required-label ggrc-form-item__label">
       <span class="ggrc-form-item__label-text">{{title}}</span>
@@ -11,6 +11,9 @@
 	<i class="fa fa-asterisk"></i>
       {{/if}}
     </label>
+    {{#isHidable .}}
+      <a class="field-hide" tabindex="-1">hide</a>
+    {{/isHidable}}
     <div class="ggrc-form-item__small-text">
       <small>
 	<em>{{helptext}}</em>
