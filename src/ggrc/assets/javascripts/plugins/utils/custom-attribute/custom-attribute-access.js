@@ -5,8 +5,11 @@
 
 import CustomAttributeObject from './custom-attribute-object';
 import {CUSTOM_ATTRIBUTE_TYPE} from './custom-attribute-config';
+import {CONTROL_TYPE} from '../../../plugins/utils/control-utils';
 import {
+  hasMissingAttachments,
   hasEmptyMandatoryValue,
+  hasRequiredAttachments,
 } from '../../../plugins/utils/custom-attribute/custom-attribute-validations';
 
 /**
@@ -133,11 +136,51 @@ export default class CustomAttributeAccess {
           this._buildDefaultValidations(caObject);
           break;
         }
+        case CUSTOM_ATTRIBUTE_TYPE.LOCAL: {
+          this._setupLocalValidations(caObject, caObjects);
+          break;
+        }
         default: {
           this._buildDefaultValidations(caObject);
         }
       }
     });
+  }
+
+  /**
+   * Setups validations for Local [caObject]{@link CustomAttributeObject}.
+   * @private
+   * @param {CustomAttributeObject} caObject - The custom attribute object for
+   * which is set validations.
+   * @param {CustomAttributeObject[]} caObjects - All custom attribute objects.
+   */
+  _setupLocalValidations(caObject, caObjects) {
+    switch (caObject.attributeType) {
+      case CONTROL_TYPE.DROPDOWN: {
+        this._buildLocalDropdownValidations(caObject, caObjects);
+        break;
+      }
+      default: {
+        this._buildDefaultValidations(caObject);
+      }
+    }
+  }
+
+  /**
+   * Builds validations for Local [caObject]{@link CustomAttributeObject}
+   * when should be used the dropdown.
+   * @private
+   * @param {CustomAttributeObject} caObject - The custom attribute object for
+   * which is set validations.
+   * @param {CustomAttributeObject[]} caObjects - All custom attribute objects.
+   */
+  _buildLocalDropdownValidations(caObject, caObjects) { // eslint-disable-line
+    const validator = caObject.validator;
+    validator.addValidationActions(
+      hasEmptyMandatoryValue,
+      hasRequiredAttachments,
+      hasMissingAttachments
+    );
   }
 
   /**
