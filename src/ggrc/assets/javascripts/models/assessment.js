@@ -3,8 +3,6 @@
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 
-import {prepareCustomAttributes} from '../plugins/utils/ca-utils';
-
 (function (can, GGRC, CMS) {
   'use strict';
 
@@ -163,26 +161,6 @@ import {prepareCustomAttributes} from '../plugins/utils/ca-utils';
     prepareAttributes: function (attrs) {
       return attrs[this.root_object] ? attrs[this.root_object] : attrs;
     },
-    /**
-     * Assessment specific AJAX data parsing logic
-     * @param {Object} attributes - hash of Model key->values
-     * @return {Object} - parsed object with normalized data
-     */
-    parseModel: function (attributes) {
-      var values;
-      var definitions;
-      attributes = this.prepareAttributes(attributes);
-      values = attributes.custom_attribute_values || [];
-      definitions = attributes.custom_attribute_definitions || [];
-
-      if (!definitions.length) {
-        return attributes;
-      }
-
-      attributes.custom_attribute_values =
-        prepareCustomAttributes(definitions, values);
-      return attributes;
-    },
     model: function (attributes, oldModel) {
       var model;
       var id;
@@ -194,7 +172,7 @@ import {prepareCustomAttributes} from '../plugins/utils/ca-utils';
       if (typeof attributes.serialize === 'function') {
         attributes = attributes.serialize();
       } else {
-        attributes = this.parseModel(attributes);
+        attributes = this.prepareAttributes(attributes);
       }
 
       id = attributes[this.id];
@@ -203,8 +181,8 @@ import {prepareCustomAttributes} from '../plugins/utils/ca-utils';
       }
 
       model = oldModel && can.isFunction(oldModel.attr) ?
-        oldModel.attr(attributes) :
-          new this(attributes);
+      oldModel.attr(attributes) :
+        new this(attributes);
 
       // Sometimes we are updating model partially and asynchronous
       // for example when we load relationships.
