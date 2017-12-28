@@ -28,12 +28,11 @@ import template from './custom-attributes-field.mustache';
       fieldId: null,
       placeholder: '',
       options: [],
-      fieldValueChanged: function (e, scope) {
+      fieldValueChanged: function (e) {
         this.dispatch({
           type: 'valueChanged',
           fieldId: e.fieldId,
           value: e.value,
-          field: scope
         });
       }
     }

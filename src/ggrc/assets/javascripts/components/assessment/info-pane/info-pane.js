@@ -37,11 +37,6 @@ import {
   buildParam,
   batchRequests,
 } from '../../../plugins/utils/query-api-utils';
-import {
-  getCustomAttributes,
-  CUSTOM_ATTRIBUTE_TYPE as CA_UTILS_CA_TYPE,
-  convertValuesToFormFields,
-} from '../../../plugins/utils/ca-utils';
 import DeferredTransaction from '../../../plugins/utils/deferred-transaction-utils';
 import tracker from '../../../tracker';
 import {REFRESH_TAB_CONTENT} from '../../../events/eventTypes';
@@ -400,14 +395,21 @@ import {CUSTOM_ATTRIBUTE_TYPE} from '../../../plugins/utils/custom-attribute/cus
           });
       },
       initializeFormFields: function () {
-        var cavs =
-        getCustomAttributes(
-          this.attr('instance'),
-          CA_UTILS_CA_TYPE.LOCAL
-        );
-        this.attr('formFields',
-          convertValuesToFormFields(cavs)
-        );
+        const instance = this.attr('instance');
+        const localCaObjects = instance
+          .customAttr({type: CUSTOM_ATTRIBUTE_TYPE.LOCAL});
+        this.updateValidateInjection(localCaObjects);
+        this.attr('formFields', localCaObjects);
+      },
+      updateValidateInjection(caObjects) {
+        caObjects.each((caObject) => {
+          const validator = caObject.validator;
+          const injected = {
+            evidences: this.attr('evidences'),
+            allLocalCaObjects: caObjects,
+          };
+          validator.updateInjection(injected);
+        });
       },
       initGlobalAttributes: function () {
         const instance = this.attr('instance');
@@ -474,28 +476,38 @@ import {CUSTOM_ATTRIBUTE_TYPE} from '../../../plugins/utils/custom-attribute/cus
 
         return instance.save();
       },
+      missingAttachmentNames(validationState) {
+        let fields = [];
+
+        if (validationState.hasMissingAttachments) {
+          fields.push(
+            validationState.hasMissingComment ? 'comment': '',
+            validationState.hasMissingEvidence ? 'evidence': ''
+          );
+        }
+
+        return _.compact(fields);
+      },
+      buildAttachModalTitle(names) {
+        const title = names
+          .map(_.capitalize)
+          .join(' and ');
+        return `Required ${title}`;
+      },
       showRequiredInfoModal: function (e, field) {
-        var scope = field || e.field;
-        var errors = scope.attr('errorsMap');
-        var errorsList = can.Map.keys(errors)
-          .map(function (error) {
-            return errors[error] ? error : null;
-          })
-          .filter(function (errorCode) {
-            return !!errorCode;
-          });
-        var data = {
-          options: scope.attr('options'),
-          contextScope: scope,
-          fields: errorsList,
-          value: scope.attr('value'),
-          title: scope.attr('title'),
-          type: scope.attr('type'),
+        const caObject = field || e.field;
+        const names = this.missingAttachmentNames(
+          caObject.validationState
+        );
+        const data = {
+          options: caObject.multiChoiceOptions,
+          contextScope: caObject,
+          fields: names,
+          value: caObject.value,
+          title: caObject.title,
+          type: caObject.attributeType,
         };
-        var title = 'Required ' +
-          data.fields.map(function (field) {
-            return can.capitalize(field);
-          }).join(' and ');
+        var title = this.buildAttachModalTitle(names);
 
         can.batch.start();
         this.attr('modal', {

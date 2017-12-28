@@ -116,6 +116,10 @@ import RefreshQueue from './refresh_queue';
       parent: can.Model.Cacheable,
       revision: can.Model.Revision
     },
+    /**
+     * @todo Connect customAttr interface
+     */
+    is_custom_attributable: true,
     defaults: {
       parent: null,
       revision: null

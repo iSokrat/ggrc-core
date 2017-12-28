@@ -55,6 +55,7 @@ import template from './ca-object-modal-content.mustache';
         });
       },
       onCommentCreated: function (e) {
+        const contextScope = this.attr('content.contextScope');
         var comment = e.comment;
         var instance = this.attr('instance');
         var context = instance.attr('context');
@@ -82,23 +83,22 @@ import template from './ca-object-modal-content.mustache';
             }
           })]
         });
-        this.attr('content.contextScope.errorsMap.comment', false);
-        this.attr('content.contextScope.validation.valid',
-          !this.attr('content.contextScope.errorsMap.evidence'));
+        contextScope.hasAttachedComment = true;
         this.attr('state.open', false);
         this.attr('state.save', false);
 
         this.attr('formSavedDeferred')
           .then(function () {
+            const scope = self.attr('content.contextScope');
             addComment({
               context: context,
               assignee_type: GGRC.Utils.getAssigneeType(instance),
               custom_attribute_revision_upd: {
                 custom_attribute_value: {
-                  id: self.attr('content.contextScope.valueId')()
+                  id: scope.customValueId,
                 },
                 custom_attribute_definition: {
-                  id: self.attr('content.contextScope.id')
+                  id: scope.customAttributeId,
                 }
               }
             });

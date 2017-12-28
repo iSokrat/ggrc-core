@@ -24,26 +24,38 @@
     template: '<i class="fa form-validation-icon__body {{iconCls}}"></i>',
     viewModel: {
       define: {
-        validation: {},
         iconCls: {
-          get: function () {
-            var icon = icons.empty;
+          get() {
+            const validation = this.attr('validation');
+            const hasEmptyMandatoryValue =
+              validation.attr('hasEmptyMandatoryValue');
+            const hasMissingAttachments =
+              validation.attr('hasMissingAttachments');
+            const hasRequiredAttachments =
+              validation.attr('hasRequiredAttachments');
+            const isMandatory = this.attr('mandatory');
+            let icon = icons.valid;
+            const hasInvalidIcon = (
+              hasEmptyMandatoryValue ||
+              hasMissingAttachments
+            );
+            const isEmptyIcon = (
+              !isMandatory &&
+              !hasRequiredAttachments
+            );
 
-            if (this.attr('validation.mandatory')) {
-              icon = this.attr('validation.valid') ?
-                icons.valid : icons.invalid;
-            } else if (this.attr('validation.requiresAttachment')) {
-              /* This validation is required for DropDowns with required attachments */
-
-              icon = (
-                this.attr('validation.valid') &&
-                !this.attr('validation.hasMissingInfo')
-              ) ? icons.valid : icons.invalid;
+            if (hasInvalidIcon) {
+              icon = icons.invalid;
+            } else if (isEmptyIcon) {
+              icon = icons.empty;
             }
+
             return icon;
           }
         }
-      }
-    }
+      },
+      validation: {},
+      mandatory: false,
+    },
   });
 })(window.can, window.GGRC);

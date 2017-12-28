@@ -189,16 +189,15 @@
                     </div>
                     <assessment-local-ca
                         {instance}="instance"
+                        {evidences}="evidences"
                         {deferred-save}="deferredSave"
-                        {evidence-amount}="evidences.length"
-                        {^has-validation-errors}="instance.hasValidationErrors"
                         {fields}="formFields"
                         {edit-mode}="editMode"
                         {^saving}="formState.saving"
                         {^form-saved-deferred}="formState.formSavedDeferred"
                         {^is-dirty}="formState.isDirty"
                         (validation-error)="setLastErrorTab(tabIndex)"
-                        (validation-changed)="showRequiredInfoModal(%event)">
+                        (miss-attachments)="showRequiredInfoModal(%event)">
 			<custom-attributes
                             {fields}="fields"
                             {edit-mode}="editMode"

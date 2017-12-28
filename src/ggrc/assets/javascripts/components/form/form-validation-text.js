@@ -22,14 +22,13 @@ GGRC.Components('formValidationText', {
     define: {
       text: {
         type: String,
-        validation: {},
         value: 'This field is required.',
         get: function () {
           var text;
 
           switch (this.attr('type')) {
             case 'dropdown':
-              text = this.attr('validation.hasMissingInfo') ?
+              text = this.attr('validation.hasMissingAttachments') ?
                 textMap.dropdownNoInfo : textMap.input;
               break;
 
@@ -46,7 +45,6 @@ GGRC.Components('formValidationText', {
       }
     },
     validation: {},
-    highlightInvalidFields: '@',
     type: 'input'
   }
 });
