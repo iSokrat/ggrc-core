@@ -20,6 +20,10 @@ describe('helpers.getCustomAttrValue', () => {
       is_custom_attributable: true,
     }, {});
 
+    can.Model.Cacheable.extend('CMS.Models.DummyModel', {
+      is_custom_attributable: true,
+    }, {});
+
     fakeCustomAttrDefs = [{
       definition_type: 'control',
       id: 3,
