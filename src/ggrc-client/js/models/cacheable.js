@@ -3,6 +3,7 @@
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
 
+import CustomAttributeAccess from '../plugins/utils/custom-attribute/custom-attribute-access';
 import {
   isSnapshot,
   toObjects,
@@ -333,6 +334,15 @@ import RefreshQueue from './refresh_queue';
           GGRC.custom_attributable_types = [];
         }
         GGRC.custom_attributable_types.push(can.extend({}, this));
+
+        this.validate(
+          '_gca_valid',
+          function () {
+            if (!this._gca_valid) {
+              return 'Missing required global custom attribute';
+            }
+          }
+        );
       }
 
       // register this type as Roleable if applicable
@@ -801,6 +811,10 @@ import RefreshQueue from './refresh_queue';
       if (!this._pending_joins) {
         this.attr('_pending_joins', []);
       }
+
+      if (this.isCustomAttributable()) {
+        this._customAttributeAccess = new CustomAttributeAccess(this);
+      }
     },
     load_custom_attribute_definitions: function () {
       let definitions;
@@ -902,6 +916,37 @@ import RefreshQueue from './refresh_queue';
       } else {
         this.custom_attributes.attr(attrId, 'Person:None');
       }
+    },
+    customAttr(...args) {
+      if (!this.isCustomAttributable()) {
+        throw Error('This type has not ability to set custom attribute value');
+      }
+
+      switch (args.length) {
+        case 0: {
+          return this._getAllCustomAttr();
+        }
+        case 1: {
+          return this._getCustomAttr(args[0]);
+        }
+        case 2: {
+          this._setCustomAttr(...args);
+          break;
+        }
+      }
+    },
+    _getAllCustomAttr() {
+      return this._customAttributeAccess.read();
+    },
+    _getCustomAttr(arg) {
+      return this._customAttributeAccess.read(arg);
+    },
+    _setCustomAttr(caId, value) {
+      const change = {caId: Number(caId), value};
+      this._customAttributeAccess.write(change);
+    },
+    isCustomAttributable() {
+      return this.attr('class').is_custom_attributable;
     },
     computed_errors: function () {
       let errors = this.errors();
