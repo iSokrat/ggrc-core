@@ -864,6 +864,37 @@ import RefreshQueue from './refresh_queue';
     isCustomAttributable() {
       return this.attr('class').is_custom_attributable;
     },
+    customAttr(...args) {
+      if (!this.isCustomAttributable()) {
+        throw Error('This type has not ability to set custom attribute value');
+      }
+
+      switch (args.length) {
+        case 0: {
+          return this._getAllCustomAttr();
+        }
+        case 1: {
+          return this._getCustomAttr(args[0]);
+        }
+        case 2: {
+          this._setCustomAttr(...args);
+          break;
+        }
+      }
+    },
+    _getAllCustomAttr() {
+      return this._customAttributeAccess.read();
+    },
+    _getCustomAttr(arg) {
+      return this._customAttributeAccess.read(arg);
+    },
+    _setCustomAttr(caId, value) {
+      const change = {caId: Number(caId), value};
+      this._customAttributeAccess.write(change);
+    },
+    isCustomAttributable() {
+      return this.attr('class').is_custom_attributable;
+    },
     computed_errors: function () {
       let errors = this.errors();
       if (this.attr('_suppress_errors')) {
