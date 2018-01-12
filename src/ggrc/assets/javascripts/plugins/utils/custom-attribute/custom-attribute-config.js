@@ -4,6 +4,29 @@
 */
 
 /**
+ * Enum represents the requirements for custom attribute attachments.
+ * @readonly
+ * @enum {Symbol}
+ */
+export const CA_DD_REQUIRED_DEPS = Object.freeze({
+  NONE: Symbol('None'),
+  COMMENT: Symbol('Comment'),
+  EVIDENCE: Symbol('Evidence'),
+  COMMENT_AND_EVIDENCE: Symbol('Comment and evidence'),
+});
+
+/**
+ * Enum represents the failed precondition type for custom attribute.
+ * @readonly
+ * @enum {Symbol}
+ */
+export const FAILED_PRECONDITION = Object.freeze({
+  VALUE: Symbol('Value is missing'),
+  COMMENT: Symbol('Comment isn\'t attached'),
+  EVIDENCE: Symbol('Evidence isn\'t attached'),
+});
+
+/**
  * Enum for custom attriubte types.
  * @readonly
  * @enum {Symbol}
