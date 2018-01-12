@@ -4,8 +4,72 @@
 */
 
 import {
+  isRequireAttachments,
+  hasMissingEvidence,
+  hasMissingComment,
   hasEmptyValue,
 } from './custom-attribute-help-utils';
+
+/**
+ * @typedef AttachRequirementsState
+ * @property {boolean} hasRequiredAttachments - true if attachments is required
+ * else false.
+ */
+
+/**
+ * Returns the object with the state of the attachments requirement.
+ * @param {Injection} injection
+ * @param {CustomAttributeObject} injection.currentCaObject - Custom attribute object.
+ * @return {AttachRequirementsState} - {@link AttachRequirementsState} object.
+ */
+function hasRequiredAttachments({currentCaObject}) {
+  const requirementKey = currentCaObject.value;
+  return {
+    hasRequiredAttachments: isRequireAttachments(
+      currentCaObject,
+      requirementKey
+    ),
+  };
+}
+
+/**
+ * @typedef MissingAttachachmentsState
+ * @property {boolean} hasMissingComment - true if the comment is missing else false.
+ * @property {boolean} hasMissingEvidence - true if the evidence is missing else false.
+ * @property {boolean} hasMissingAttachments - true if the attachments is missing else false.
+ */
+
+/**
+ * Returns the object with the state of the missing attachments.
+ * @param {Injection} injection
+ * @param {CustomAttributeObject} injection.currentCaObject - Verifiable custom attribute
+ * object.
+ * @param {CustomAttributeObjects[]} injection.allLocalCaObjects - Custom
+ * attribute objects for comparation with evidences.
+ * @param {can.List} injection.evidences - The set of evidences.
+ * @return {MissingAttachachmentsState} - {@link MissingAttachachmentsState} object.
+ */
+function hasMissingAttachments({
+  currentCaObject,
+  allLocalCaObjects,
+  evidences,
+}) {
+  const missingComment = hasMissingComment(currentCaObject);
+  const missingEvidences = hasMissingEvidence(
+    currentCaObject,
+    allLocalCaObjects,
+    evidences
+  );
+
+  return {
+    hasMissingComment: missingComment,
+    hasMissingEvidence: missingEvidences,
+    hasMissingAttachments: (
+      missingComment ||
+      missingEvidences
+    ),
+  };
+}
 
 /**
  * @typedef EmptyMandatoryState
@@ -35,5 +99,7 @@ function hasEmptyMandatoryValue({currentCaObject}) {
 }
 
 export {
+  hasMissingAttachments,
   hasEmptyMandatoryValue,
+  hasRequiredAttachments,
 };
