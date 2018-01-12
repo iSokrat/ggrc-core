@@ -12,7 +12,6 @@ import '../tabs/tab-container';
 import '../show-more/show-more';
 import '../related-objects/related-comments';
 import './object-popover';
-import {convertValuesToFormFields} from '../../plugins/utils/ca-utils';
 import template from './related-assessment-popover.mustache';
 
 (function (can) {
@@ -48,9 +47,14 @@ import template from './related-assessment-popover.mustache';
         },
         selectedAssessmentFields: {
           get: function () {
-            let caValues =
-              this.attr('selectedAssessment.data.custom_attribute_values');
-            return caValues ? convertValuesToFormFields(caValues) : [];
+            const data = this.attr('selectedAssessment.data');
+            let fields = [];
+
+            if (data) {
+              fields = data.customAttr();
+            }
+
+            return fields;
           },
         },
       },

@@ -3,11 +3,6 @@
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
  */
 
-import {
-  CA_DD_REQUIRED_DEPS,
-  applyChangesToCustomAttributeValue,
-}
-  from '../../plugins/utils/ca-utils';
 import {VALIDATION_ERROR, RELATED_ITEMS_LOADED} from '../../events/eventTypes';
 import tracker from '../../tracker';
 import Permission from '../../permission';
@@ -20,10 +15,10 @@ import Permission from '../../permission';
     viewModel: {
       instance: null,
       fields: [],
+      evidences: [],
       isDirty: false,
       saving: false,
       highlightInvalidFields: false,
-
       define: {
         editMode: {
           type: 'boolean',
@@ -43,150 +38,51 @@ import Permission from '../../permission';
               Permission.is_allowed_for('update', this.attr('instance'));
           },
         },
-        evidenceAmount: {
-          type: 'number',
-        },
-        isEvidenceRequired: {
-          get: function () {
-            let optionsWithEvidence = this.attr('fields')
-              .filter(function (item) {
-                return item.attr('type') === 'dropdown';
-              })
-              .filter(function (item) {
-                let requiredOption =
-                  item.attr('validationConfig')[item.attr('value')];
-                return requiredOption === CA_DD_REQUIRED_DEPS.EVIDENCE ||
-                   requiredOption ===
-                    CA_DD_REQUIRED_DEPS.COMMENT_AND_EVIDENCE;
-              }).length;
-            return optionsWithEvidence > this.attr('evidenceAmount');
-          },
-        },
       },
-      validateForm: function ({
+      hasValidationErrors() {
+        return this.attr('fields')
+          .filter(this.hasLocalValidationErrors).length > 0;
+      },
+      hasLocalValidationErrors(caObject) {
+        const validationState = caObject.validationState;
+        return (
+          validationState.hasEmptyMandatoryValue ||
+          validationState.hasMissingAttachments
+        );
+      },
+      validateForm({
         triggerField = null,
         triggerAttachmentModals = false,
         saveDfd = null,
       } = {}) {
-        let hasValidationErrors = false;
         this.attr('fields')
           .each((field) => {
             this.performValidation(field);
-            if ( !field.validation.valid ) {
-              hasValidationErrors = true;
-            }
+
             if ( triggerField === field &&
                  triggerAttachmentModals &&
-                 field.validation.hasMissingInfo ) {
+                 field.validationState.hasMissingAttachments ) {
               this.dispatch({
-                type: 'validationChanged',
+                type: 'missAttachments',
                 field,
                 saveDfd,
               });
             }
           });
 
-        if ( this.attr('instance') ) {
-          this.attr('instance._hasValidationErrors', hasValidationErrors);
-        }
+        this.attr(
+          'instance.hasValidationErrors',
+          this.hasValidationErrors()
+        );
 
-        if ( hasValidationErrors ) {
+        if (this.attr('instance.hasValidationErrors')) {
           this.dispatch(VALIDATION_ERROR);
         }
       },
-      performValidation: function (field) {
-        let fieldValid;
-        let hasMissingEvidence;
-        let hasMissingComment;
-        let hasMissingValue;
-        let requiresEvidence;
-        let requiresComment;
-        let value = field.value;
-        let valCfg = field.validationConfig;
-        let fieldValidationConf = valCfg && valCfg[value];
-        let isMandatory = field.validation.mandatory;
-        let errorsMap = field.errorsMap || {
-          evidence: false,
-          comment: false,
-        };
-
-        requiresEvidence =
-          fieldValidationConf === CA_DD_REQUIRED_DEPS.EVIDENCE ||
-          fieldValidationConf === CA_DD_REQUIRED_DEPS.COMMENT_AND_EVIDENCE;
-
-        requiresComment =
-          fieldValidationConf === CA_DD_REQUIRED_DEPS.COMMENT ||
-          fieldValidationConf === CA_DD_REQUIRED_DEPS.COMMENT_AND_EVIDENCE;
-
-        hasMissingEvidence = requiresEvidence &&
-          !!this.attr('isEvidenceRequired');
-
-        hasMissingComment = requiresComment && !!errorsMap.comment;
-
-        if (field.type === 'checkbox') {
-          if (value === '1') {
-            value = true;
-          } else if (value === '0') {
-            value = false;
-          }
-
-          field.attr({
-            validation: {
-              show: isMandatory,
-              valid: isMandatory ? !hasMissingValue && !!(value) : true,
-              hasMissingInfo: false,
-            },
-          });
-        } else if (field.type === 'dropdown') {
-          fieldValid = (value) ?
-            !(hasMissingEvidence || hasMissingComment || hasMissingValue) :
-            !isMandatory && !hasMissingValue;
-
-          field.attr({
-            validation: {
-              show: isMandatory || !!value,
-              valid: fieldValid,
-              hasMissingInfo: (hasMissingEvidence || hasMissingComment),
-              requiresAttachment: (requiresEvidence || requiresComment),
-            },
-            errorsMap: {
-              evidence: hasMissingEvidence,
-              comment: hasMissingComment,
-            },
-          });
-        } else {
-          // validation for all other fields
-          field.attr({
-            validation: {
-              show: isMandatory,
-              valid: isMandatory ? !hasMissingValue && !!(value) : true,
-              hasMissingInfo: false,
-            },
-          });
-        }
+      performValidation(caObject) {
+        caObject.validate();
       },
-      updateEvidenceValidation: function () {
-        let isEvidenceRequired = this.attr('isEvidenceRequired');
-        this.attr('fields')
-          .filter(function (item) {
-            return item.attr('type') === 'dropdown';
-          })
-          .each(function (item) {
-            let isCommentRequired;
-            if ((item.attr('validationConfig')[item.attr('value')] === 2 ||
-                item.attr('validationConfig')[item.attr('value')] === 3)) {
-              isCommentRequired = item.attr('errorsMap.comment');
-              item.attr('errorsMap.evidence', isEvidenceRequired);
-              item.attr('validation.valid',
-                !isEvidenceRequired && !isCommentRequired);
-            }
-          });
-      },
-      save: function (fieldId, fieldValue) {
-        const self = this;
-        const changes = {
-          [fieldId]: fieldValue,
-        };
+      save(caId, value) {
         const stopFn = tracker.start(this.attr('instance.type'),
           tracker.USER_JOURNEY_KEYS.NAVIGATION,
           tracker.USER_ACTIONS.ASSESSMENT.EDIT_LCA);
@@ -194,11 +90,7 @@ import Permission from '../../permission';
         this.attr('isDirty', true);
 
         return this.attr('deferredSave').push(function () {
-          let caValues = self.attr('instance.custom_attribute_values');
-          applyChangesToCustomAttributeValue(
-            caValues,
-            new can.Map(changes));
-
+          this.applyChangesToCaObject(caId, value);
           self.attr('saving', true);
         })
         // todo: error handling
@@ -208,32 +100,48 @@ import Permission from '../../permission';
           stopFn();
         });
       },
-      fieldRequiresComment: function (field) {
-        let fieldValidationConf = field.validationConfig[field.value];
-          return fieldValidationConf === CA_DD_REQUIRED_DEPS.COMMENT ||
-            fieldValidationConf === CA_DD_REQUIRED_DEPS.COMMENT_AND_EVIDENCE;
-      },
       attributeChanged: function (e) {
-        e.field.attr('value', e.value);
+        const caObject = e.field;
+        const {
+          value,
+          fieldId: caId,
+        } = e;
 
-        // Removes "link" with the comment for DD field and
-        // makes it require a new one
-        if ( e.field.attr('type') === 'dropdown' &&
-            this.fieldRequiresComment(e.field) ) {
-          e.field.attr('errorsMap.comment', true);
+        if (caObject.value === value) {
+          return;
         }
 
-        let saveDfd = this.save(e.fieldId, e.value);
+        // We set value for caObject two times -
+        // before validation and when save instance
+        this.applyChangesToCaObject(caId, value);
+        this.performValidation(caObject);
+
+        // Each time we unset a comment state to
+        // give ability to set new comment when are
+        // selected the option with required comment
+        caObject.attachedComment = false;
+
+        let saveDfd = this.save(caId, value);
 
         this.validateForm({
           triggerAttachmentModals: true,
-          triggerField: e.field,
-          saveDfd: saveDfd,
+          triggerField: caObject,
+          saveDfd,
         });
+      },
+      applyChangesToCaObject(caId, value) {
+        const instance = this.attr('instance');
+        instance.customAttr(caId, value);
       },
     },
     events: {
-      '{viewModel} evidenceAmount': function () {
+      inserted: function () {
+        this.viewModel.validateForm();
+      },
+      '{viewModel.evidences} change'() {
+        this.viewModel.validateForm();
+      },
+      '{viewModel.instance} update': function () {
         this.viewModel.validateForm();
       },
       [`{viewModel.instance} ${RELATED_ITEMS_LOADED.type}`]: function () {
@@ -248,10 +156,10 @@ import Permission from '../../permission';
         let field;
         let index;
 
-        index = _.findIndex(this.viewModel.attr('fields'), function (field) {
-          let validation = field.attr('validation');
-          return validation.show && !validation.valid;
-        });
+        index = _.findIndex(
+          this.viewModel.attr('fields'),
+          this.hasLocalValidationErrors
+        );
 
         field = $('.field-wrapper')[index];
 
@@ -266,15 +174,26 @@ import Permission from '../../permission';
       },
     },
     helpers: {
-      isInvalidField: function (show, valid, highlightInvalidFields, options) {
-        show = Mustache.resolve(show);
-        valid = Mustache.resolve(valid);
+      isInvalidField(
+        hasEmptyMandatoryValue,
+        hasMissingAttachments,
+        highlightInvalidFields,
+        options
+      ) {
+        let isInvalid;
+
+        hasEmptyMandatoryValue = Mustache.resolve(hasEmptyMandatoryValue);
+        hasMissingAttachments = Mustache.resolve(hasMissingAttachments);
         highlightInvalidFields = Mustache.resolve(highlightInvalidFields);
 
-        if (highlightInvalidFields && show && !valid) {
-          return options.fn(options.context);
-        }
-        return options.inverse(options.context);
+        isInvalid = (
+          hasEmptyMandatoryValue ||
+          hasMissingAttachments
+        );
+
+        return isInvalid && highlightInvalidFields
+          ? options.fn(options.context)
+          : options.inverse(options.context);
       },
     },
   });
