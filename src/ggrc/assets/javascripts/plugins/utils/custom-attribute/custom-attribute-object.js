@@ -6,9 +6,22 @@
 import StateValidator from '../state-validator-utils';
 import {
   CUSTOM_ATTRIBUTE_TYPE,
+  CA_DD_REQUIRED_DEPS,
+  FAILED_PRECONDITION,
   caDefTypeName,
 } from './custom-attribute-config';
 import {CONTROL_TYPE} from '../control-utils.js';
+
+/**
+ * Represents relationships between custom attribute multi choice mandatory
+ * options (represented in the back-end form) and appopriate enum values.
+ */
+const caMultiChoiceMandatory = {
+  '0': CA_DD_REQUIRED_DEPS.NONE,
+  '1': CA_DD_REQUIRED_DEPS.COMMENT,
+  '2': CA_DD_REQUIRED_DEPS.EVIDENCE,
+  '3': CA_DD_REQUIRED_DEPS.COMMENT_AND_EVIDENCE,
+};
 
 /**
  * Represents relationships between back-end custom attribute control types
@@ -71,6 +84,7 @@ export default class CustomAttributeObject {
 
     this._setupCaValue(caValue);
     this._buildStateValidator();
+    this._initAttachments();
   }
 
   /**
@@ -106,6 +120,22 @@ export default class CustomAttributeObject {
     const attributeValue = this._prepareAttributeValue(newValue);
     caValue.attr('attribute_object', attributeObject);
     caValue.attr('attribute_value', attributeValue);
+  }
+
+  /**
+   * Returns the attachment state for comment.
+   * @return {boolean} - The attachment state.
+   */
+  get hasAttachedComment() {
+    return this._hasAttachedComment;
+  }
+
+  /**
+   * Sets the attachment state for comment.
+   * @param {boolean} attached - The attachment state.
+   */
+  set attachedComment(attached) {
+    this._hasAttachedComment = attached;
   }
 
   /**
@@ -196,6 +226,65 @@ export default class CustomAttributeObject {
     return (typeof options === 'string')
       ? options.split(',')
       : [];
+  }
+
+  /**
+   * Returns a list of requirements for the multi choice options.
+   * If the custom attribute doesn't have requirements then returns an empty
+   * list.
+   * @return {CA_DD_REQUIRED_DEPS[]} - The list of requirements.
+   */
+  get multiChoiceMandatory() {
+    const mandatoryOptions = this._caDefinition.attr('multi_choice_mandatory');
+    const optionValues = (typeof mandatoryOptions === 'string')
+      ? mandatoryOptions.split(',')
+      : [];
+
+    return optionValues.map((optionValue) =>
+      caMultiChoiceMandatory[optionValue]
+    );
+  }
+
+  /**
+   * Returns HashMap object which contains the relationships between
+   * the multi choice options and their requiremens.
+   * @return {Object.<number, CA_DD_REQUIRED_DEPS>}
+   *
+   * @example
+   *  multiChoiceOptions = ['option1', 'option2', 'option3']
+   *  multiChoiceMandatory = [NONE, EVIDENCE, COMMENT]
+   *  multiChoiceRequirements = {
+   *    'option1': NONE,
+   *    'option2': EVIDENCE,
+   *    'option3': COMMENT,
+   *  }
+   */
+  get multiChoiceRequirements() {
+    const multiChoiceMandatory = this.multiChoiceMandatory;
+    const optionValues = this.multiChoiceOptions;
+    const initRequirements = {};
+
+    return multiChoiceMandatory
+      .reduce((requirements, requirement, requirementIndex) => {
+        const optionValue = optionValues[requirementIndex];
+        return {
+          ...requirements,
+          [optionValue]: requirement,
+        };
+      }, initRequirements);
+  }
+
+  get failedPreconditions() {
+    const caValue = this._caValue;
+    const failedPreconditions = caValue.attr('preconditions_failed') || [];
+    return _.map(failedPreconditions, (failedPrecondition) => {
+      switch (failedPrecondition) {
+        case 'comment': return FAILED_PRECONDITION.COMMENT;
+        case 'evidence': return FAILED_PRECONDITION.EVIDENCE;
+        default:
+          return FAILED_PRECONDITION.VALUE;
+      }
+    });
   }
 
   /**
@@ -345,5 +434,18 @@ export default class CustomAttributeObject {
      * @private
      */
     this._validationState = new can.Map(validator.validationState);
+  }
+
+  _initAttachments() {
+    // if comment was not set on the server
+    const failComment = this.failedPreconditions.find((failed) =>
+      failed === FAILED_PRECONDITION.COMMENT
+    );
+
+    /**
+     * The comment attachment state.
+     * @private
+     */
+    this.attachedComment = !failComment;
   }
 }
