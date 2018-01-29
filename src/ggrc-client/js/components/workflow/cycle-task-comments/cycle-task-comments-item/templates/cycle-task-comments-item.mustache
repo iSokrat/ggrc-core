@@ -3,22 +3,21 @@
     Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 }}
 
-
 <li
-  data-object-id="{{instance.id}}"
-  data-object-type="{{instance.class.table_singular}}"
+  data-object-id="{{comment.id}}"
+  data-object-type="{{comment.class.table_singular}}"
   class="clearfix">
   <span class="status-label status-"></span>
   <div class="w-status">
-    {{{instance.description}}}
+    {{{comment.description}}}
     <div class="evidence-list">
-      <related-documents {instance}="instance" document-type="EVIDENCE">
+      <related-documents {instance}="comment" document-type="EVIDENCE">
         <object-list {items}="documents">
           <editable-document-object-list-item {document}="{.}">
-            {{^if_equals parentInstance.status 'Verified'}}
+            {{^if_equals instance.status 'Verified'}}
               <unmap-button
                 (unmapped)="loadDocuments()"
-                {destination}="instance"
+                {destination}="comment"
                 {source}="document">
                 <action-toolbar-control>
                   <i class="fa fa-trash"></i>
@@ -31,8 +30,8 @@
     </div>
     <span class="entry-author">
       Modified by
-      {{#using person=instance.modified_by}}{{>'/static/mustache/people/popover.mustache'}}{{/using}}
-      {{#if instance.created_at}}on {{date instance.created_at}}{{/if}}
+      {{#using person=comment.modified_by}}{{>'/static/mustache/people/popover.mustache'}}{{/using}}
+      {{#if comment.created_at}}on {{date comment.created_at}}{{/if}}
     </span>
   </div>
 
@@ -40,7 +39,7 @@
     <a class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="fa fa-cog"></i></a>
     <ul class="dropdown-menu" aria-labelledby="drop1" role="menu">
       <li>
-        {{^if_equals parent_instance.status 'Verified'}}
+        {{^if_equals instance.status 'Verified'}}
           <a href="javascript://" data-toggle="modal-ajax-form" data-modal-reset="reset" data-modal-class="modal-wide" data-object-singular="CycleTaskEntry" data-object-plural="{{instance.class.table_plural}}" data-object-id="{{instance.id}}">
             <i class="fa fa-pencil-square-o"></i>
             Edit Comment
@@ -48,9 +47,9 @@
         {{/if_equals}}
       </li>
       <li>
-        {{^if_equals parent_instance.status 'Verified'}}
-            {{#is_allowed 'delete' instance}}
-            <a data-toggle="modal-ajax-deleteform" data-object-plural="{{instance.class.table_plural}}" data-object-singular="CycleTaskEntry" data-modal-reset="reset" data-modal-class="modal" data-object-id="{{instance.id}}" href="javascript://">
+        {{^if_equals instance.status 'Verified'}}
+            {{#is_allowed 'delete' comment}}
+            <a data-toggle="modal-ajax-deleteform" data-object-plural="{{comment.class.table_plural}}" data-object-singular="CycleTaskEntry" data-modal-reset="reset" data-modal-class="modal" data-object-id="{{instance.id}}" href="javascript://">
               <i class="fa fa-trash"></i>
               Delete Comment
             </a>

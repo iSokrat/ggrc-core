@@ -1,0 +1,17 @@
+/*
+  Copyright (C) 2018 Google Inc.
+  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
+*/
+
+import template from './templates/cycle-task-comments-item.mustache';
+
+const viewModel = new can.Map({
+  instance: {},
+  comment: {},
+});
+
+export default GGRC.Components('cycleTaskCommentsItem', {
+  tag: 'cycle-task-comments-item',
+  template,
+  viewModel,
+});
