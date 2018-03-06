@@ -316,15 +316,21 @@ def update_cycle_task_child_state(obj):
   Args:
     obj: Cycle task instance
   """
-  status_order = (None, 'Assigned', 'InProgress',
-                  'Declined', 'Finished', 'Verified')
+  status_order = (
+      None,
+      obj.ASSIGNED,
+      obj.IN_PROGRESS,
+      obj.DECLINED,
+      obj.FINISHED,
+      obj.VERIFIED,
+  )
   status = obj.status
   children_attrs = _cycle_task_children_attr.get(type(obj), [])
   for children_attr in children_attrs:
     if children_attr:
       children = getattr(obj, children_attr, None)
       for child in children:
-        if status == 'Declined' or \
+        if status == obj.DECLINED or \
            status_order.index(status) > status_order.index(child.status):
           if is_allowed_update(child.__class__.__name__,
                                child.id, child.context.id):
@@ -356,9 +362,9 @@ def _update_parent_status(parent, child_statuses):
   elif len(child_statuses) == 1:
     new_status = child_statuses.pop()
     if new_status == "Declined":
-      new_status = "InProgress"
-  elif {"InProgress", "Declined", "Assigned"} & child_statuses:
-    new_status = "InProgress"
+      new_status = parent.IN_PROGRESS
+  elif {parent.IN_PROGRESS, "Declined", "Assigned"} & child_statuses:
+    new_status = parent.IN_PROGRESS
   else:
     new_status = "Finished"
   if old_status == new_status:
