@@ -26,7 +26,7 @@ describe('GGRC.Components.subTreeWrapper', function () {
 
       vm.attr('oldValues', []);
       vm.attr('instance', {
-        status: 'InProgress',
+        status: 'In Progress',
       });
 
       changeStatus = vm.changeStatus.bind(vm);
@@ -40,7 +40,7 @@ describe('GGRC.Components.subTreeWrapper', function () {
       changeStatus(null, fakeElement, fakeEvent);
 
       expect(vm.attr('oldValues').length).toEqual(1);
-      expect(vm.attr('oldValues')[0].status).toEqual('InProgress');
+      expect(vm.attr('oldValues')[0].status).toEqual('In Progress');
       expect(vm.setStatus).toHaveBeenCalledWith('Verified');
     });
 
@@ -53,7 +53,7 @@ describe('GGRC.Components.subTreeWrapper', function () {
         changeStatus(null, fakeElement, fakeEvent);
 
         expect(vm.attr('oldValues').length).toEqual(1);
-        expect(vm.attr('oldValues')[0].status).toEqual('InProgress');
+        expect(vm.attr('oldValues')[0].status).toEqual('In Progress');
         expect(vm.setStatus).toHaveBeenCalledWith('Verified');
       });
   });
