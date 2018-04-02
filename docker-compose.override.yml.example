@@ -11,6 +11,3 @@ services:
      - ISSUE_TRACKER_ENABLED=
      - ISSUE_TRACKER_MOCK=
 
-  db:
-    tmpfs:
-      - /var/lib/mysql/:rw,noexec,nosuid,size=3G
