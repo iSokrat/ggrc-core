@@ -7,6 +7,12 @@ import template from './templates/task-list.mustache';
 import Pagination from '../../base-objects/pagination';
 import Permission from '../../../permission';
 
+/**
+ * A model name. Each item within the task list
+ * will have this model name.
+ */
+const RELATED_ITEMS_TYPE = 'TaskGroupTask';
+
 const viewModel = can.Map.extend({
   define: {
     paging: {
@@ -24,7 +30,7 @@ const viewModel = can.Map.extend({
       },
     },
   },
-  relatedItemsType: 'TaskGroupTask',
+  relatedItemsType: RELATED_ITEMS_TYPE,
   initialOrderBy: 'created_at',
   gridSpinner: 'grid-spinner',
   items: [],
@@ -60,12 +66,20 @@ const viewModel = can.Map.extend({
 });
 
 const events = {
-  '{CMS.Models.TaskGroupTask} destroyed'() {
-    this.viewModel.updatePagingAfterDestroy();
+  [`{CMS.Models.${RELATED_ITEMS_TYPE}} destroyed`](model, event, instance) {
+    if (instance instanceof CMS.Models[RELATED_ITEMS_TYPE]) {
+      this.viewModel.updatePagingAfterDestroy();
+    }
   },
-  '{CMS.Models.TaskGroupTask} created'() {
-    this.viewModel.updatePagingAfterCreate();
+  [`{CMS.Models.${RELATED_ITEMS_TYPE}} created`](model, event, instance) {
+    if (instance instanceof CMS.Models[RELATED_ITEMS_TYPE]) {
+      this.viewModel.updatePagingAfterCreate();
+    }
   },
+};
+
+export {
+  RELATED_ITEMS_TYPE,
 };
 
 export default can.Component.extend({
