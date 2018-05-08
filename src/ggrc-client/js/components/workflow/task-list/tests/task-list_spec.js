@@ -3,9 +3,10 @@
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
 
-import Component from '../task-list';
+import Component, {RELATED_ITEMS_TYPE} from '../task-list';
 import {getComponentVM} from '../../../../../js_specs/spec_helpers';
 import Permission from '../../../../permission';
+import {REFRESH_RELATED} from '../../../../events/eventTypes';
 
 describe('task-list component', () => {
   let viewModel;
@@ -62,12 +63,17 @@ describe('task-list component', () => {
         viewModel.attr('paging.current', 1);
       });
 
-      it('dispatches "refreshInstance" event for base instance',
-        function () {
-          const dispatch = spyOn(viewModel.baseInstance, 'dispatch');
-          viewModel.updatePagingAfterCreate();
-          expect(dispatch).toHaveBeenCalledWith('refreshInstance');
+      it('dispatches REFRESH_RELATED event for base instance with ' +
+      'relatedItemsType model', function () {
+        const dispatch = spyOn(viewModel.baseInstance, 'dispatch');
+        const type = 'ModelName';
+        viewModel.attr('relatedItemsType', type);
+        viewModel.updatePagingAfterCreate();
+        expect(dispatch).toHaveBeenCalledWith({
+          ...REFRESH_RELATED,
+          model: type,
         });
+      });
     });
   });
 
@@ -91,10 +97,16 @@ describe('task-list component', () => {
     });
 
     describe('if current page is first', () => {
-      it('dispatches "refreshInstance" event for baseInstance', function () {
+      it('dispatches REFRESH_RELATED event for base instance with ' +
+      'relatedItemsType model', function () {
         const dispatch = spyOn(viewModel.baseInstance, 'dispatch');
+        const type = 'ModelName';
+        viewModel.attr('relatedItemsType', type);
         viewModel.updatePagingAfterDestroy();
-        expect(dispatch).toHaveBeenCalledWith('refreshInstance');
+        expect(dispatch).toHaveBeenCalledWith({
+          ...REFRESH_RELATED,
+          model: type,
+        });
       });
     });
   });
@@ -106,37 +118,54 @@ describe('task-list component', () => {
       events = Component.prototype.events;
     });
 
-    describe('"{CMS.Models.TaskGroupTask} created"() event', () => {
+    describe('"{CMS.Models.${RELATED_ITEMS_TYPE}} created"() event', () => {
       let handler;
       let eventsScope;
 
       beforeEach(function () {
         eventsScope = {viewModel};
-        handler = events['{CMS.Models.TaskGroupTask} created']
+        handler = events[`{CMS.Models.${RELATED_ITEMS_TYPE}} created`]
           .bind(eventsScope);
       });
 
-      it('updates page items', function () {
-        const update = spyOn(viewModel, 'updatePagingAfterCreate');
-        handler();
-        expect(update).toHaveBeenCalled();
+
+      describe('if passed instance has "RELATED_ITEMS_TYPE" type then', () => {
+        let instance;
+
+        beforeEach(function () {
+          instance = new CMS.Models[RELATED_ITEMS_TYPE];
+        });
+
+        it('updates items of the page', function () {
+          const update = spyOn(viewModel, 'updatePagingAfterCreate');
+          handler({}, {}, instance);
+          expect(update).toHaveBeenCalled();
+        });
       });
     });
 
-    describe('"{CMS.Models.TaskGroupTask} destroyed"() event', () => {
+    describe('"{CMS.Models.${RELATED_ITEMS_TYPE}} destroyed"() event', () => {
       let handler;
       let eventsScope;
 
       beforeEach(function () {
         eventsScope = {viewModel};
-        handler = events['{CMS.Models.TaskGroupTask} destroyed']
+        handler = events[`{CMS.Models.${RELATED_ITEMS_TYPE}} destroyed`]
           .bind(eventsScope);
       });
 
-      it('updates page items', function () {
-        const update = spyOn(viewModel, 'updatePagingAfterDestroy');
-        handler();
-        expect(update).toHaveBeenCalled();
+      describe('if passed instance has "RELATED_ITEMS_TYPE" type then', () => {
+        let instance;
+
+        beforeEach(function () {
+          instance = new CMS.Models[RELATED_ITEMS_TYPE];
+        });
+
+        it('updates items of the page', function () {
+          const update = spyOn(viewModel, 'updatePagingAfterDestroy');
+          handler({}, {}, instance);
+          expect(update).toHaveBeenCalled();
+        });
       });
     });
   });
