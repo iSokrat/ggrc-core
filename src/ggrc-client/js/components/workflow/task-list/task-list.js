@@ -8,13 +8,13 @@ import Pagination from '../../base-objects/pagination';
 import Permission from '../../../permission';
 import {REFRESH_RELATED} from '../../../events/eventTypes';
 
-/**
- * A model name. Each item within the task list
- * will have this model name.
- */
-const RELATED_ITEMS_TYPE = 'TaskGroupTask';
-
 const viewModel = can.Map.extend({
+  /**
+   * A model name. Each item within the task list
+   * will have this model name.
+   */
+  relatedItemsType: 'TaskGroupTask',
+}, {
   define: {
     paging: {
       value() {
@@ -30,8 +30,12 @@ const viewModel = can.Map.extend({
         );
       },
     },
+    relatedItemsType: {
+      get() {
+        return this.constructor.relatedItemsType;
+      },
+    },
   },
-  relatedItemsType: RELATED_ITEMS_TYPE,
   initialOrderBy: 'created_at',
   gridSpinner: 'grid-spinner',
   items: [],
@@ -73,20 +77,16 @@ const viewModel = can.Map.extend({
 });
 
 const events = {
-  [`{CMS.Models.${RELATED_ITEMS_TYPE}} destroyed`](model, event, instance) {
-    if (instance instanceof CMS.Models[RELATED_ITEMS_TYPE]) {
+  [`{CMS.Models.${viewModel.relatedItemsType}} destroyed`](model, event, instance) {
+    if (instance instanceof CMS.Models[viewModel.relatedItemsType]) {
       this.viewModel.updatePagingAfterDestroy();
     }
   },
-  [`{CMS.Models.${RELATED_ITEMS_TYPE}} created`](model, event, instance) {
-    if (instance instanceof CMS.Models[RELATED_ITEMS_TYPE]) {
+  [`{CMS.Models.${viewModel.relatedItemsType}} created`](model, event, instance) {
+    if (instance instanceof CMS.Models[viewModel.relatedItemsType]) {
       this.viewModel.updatePagingAfterCreate();
     }
   },
-};
-
-export {
-  RELATED_ITEMS_TYPE,
 };
 
 export default can.Component.extend({

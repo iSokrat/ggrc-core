@@ -3,7 +3,7 @@
  Licensed under http://www.apache.org/licenses/LICENSE-2.0 <see LICENSE file>
 */
 
-import Component, {RELATED_ITEMS_TYPE} from '../task-list';
+import Component from '../task-list';
 import {getComponentVM} from '../../../../../js_specs/spec_helpers';
 import Permission from '../../../../permission';
 import {REFRESH_RELATED} from '../../../../events/eventTypes';
@@ -113,27 +113,37 @@ describe('task-list component', () => {
 
   describe('events', () => {
     let events;
+    let staticVmProps;
 
     beforeEach(function () {
       events = Component.prototype.events;
+      staticVmProps = Component.prototype.viewModel;
     });
 
-    describe('"{CMS.Models.${RELATED_ITEMS_TYPE}} created"() event', () => {
+    fdescribe('"{CMS.Models.${viewModel.relatedItemsType}} created"() event', () => {
       let handler;
       let eventsScope;
 
       beforeEach(function () {
         eventsScope = {viewModel};
-        handler = events[`{CMS.Models.${RELATED_ITEMS_TYPE}} created`]
+
+        handler = events[`{CMS.Models.${staticVmProps.relatedItemsType}} created`]
           .bind(eventsScope);
       });
 
-
-      describe('if passed instance has "RELATED_ITEMS_TYPE" type then', () => {
+      describe('if passed instance has "relatedItemsType" type then', () => {
         let instance;
+        let origRelatedItemsType;
 
         beforeEach(function () {
-          instance = new CMS.Models[RELATED_ITEMS_TYPE];
+          origRelatedItemsType = staticVmProps.relatedItemsType;
+          staticVmProps.relatedItemsType = 'TestType';
+          can.Model.Cacheable.extend(`CMS.Models.${staticVmProps.relatedItemsType}`, {});
+          instance = new CMS.Models[staticVmProps.relatedItemsType];
+        });
+
+        afterEach(function () {
+          staticVmProps.relatedItemsType = origRelatedItemsType;
         });
 
         it('updates items of the page', function () {
