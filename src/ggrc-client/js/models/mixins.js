@@ -249,7 +249,7 @@ const AUDIT_ISSUE_TRACKER = {
 
   can.Model.Mixin('mapping-limit-issue', {
     getAllowedMappings: _.partial(getAllowedMappings,
-      ['Program', 'Project', 'TaskGroup', 'Document']),
+      ['Program', 'Project', 'Document']),
   }, {});
 
   can.Model.Mixin('auditIssueTracker',

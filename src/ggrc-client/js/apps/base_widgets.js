@@ -118,6 +118,31 @@
     Vendor: filteredTypes,
   };
 
+  const workflowModels = [
+    'TaskGroup',
+    'Workflow',
+    'CycleTaskEntry',
+    'CycleTaskGroupObjectTask',
+    'CycleTaskGroup',
+  ];
+  const testModels = filteredTypes.concat(workflowModels);
+  Object.assign(baseWidgetsByType, {
+    Cycle: testModels,
+    TaskGroup: testModels,
+    Workflow: testModels,
+    CycleTaskEntry: testModels,
+    CycleTaskGroupObjectTask: testModels,
+    CycleTaskGroup: testModels,
+  });
+
+  const workflowTypes = _.difference(filteredTypes, ['Assessment', 'Audit',
+    'Person']);
+
+  workflowTypes.forEach((workflowType) => {
+    baseWidgetsByType[workflowType] = baseWidgetsByType[workflowType]
+      .concat(workflowModels);
+  });
+
   baseWidgetsByType = _.extend(baseWidgetsByType, objectVersionWidgets);
 
   GGRC.tree_view = GGRC.tree_view || new can.Map();

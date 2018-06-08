@@ -85,7 +85,6 @@ import InfoWidget from '../controllers/info_widget_controller';
 
       Workflow: {
         _canonical: {
-          task_groups: 'TaskGroup',
           context: 'Context',
         },
         task_groups: Direct(
@@ -287,7 +286,6 @@ import InfoWidget from '../controllers/info_widget_controller';
         current_approval_cycles: Cross('approval_workflows', 'current_cycle'),
         _canonical: {
           workflows: 'Workflow',
-          task_groups: 'TaskGroup',
         },
       };
       mappings[type].orphaned_objects = Multi([
@@ -313,9 +311,6 @@ import InfoWidget from '../controllers/info_widget_controller';
     let pageInstance = GGRC.page_instance();
     let treeWidgets = GGRC.tree_view.base_widgets_by_type;
     let subTrees = GGRC.tree_view.sub_tree_for;
-    let subTreeItems = ['Cycle'];
-    let models = ['TaskGroup', 'Workflow', 'CycleTaskEntry',
-      'CycleTaskGroupObjectTask', 'CycleTaskGroupObject', 'CycleTaskGroup'];
     _.each(_workflowObjectTypes, function (type) {
       let widget;
       if (!type || !treeWidgets[type]) {
@@ -324,7 +319,6 @@ import InfoWidget from '../controllers/info_widget_controller';
 
       widget = subTrees[type];
 
-      treeWidgets[type] = treeWidgets[type].concat(models);
       if (!_.isEmpty(subTrees.serialize)) {
         widget.attr({
           display_list: widget.display_list
@@ -338,21 +332,23 @@ import InfoWidget from '../controllers/info_widget_controller';
         });
       }
     });
-    subTreeItems.concat(models).forEach(function (item) {
-      let defaults = {
-        model_list: GGRC.tree_view.basic_model_list,
-        display_list: can.Map.keys(GGRC.tree_view.base_widgets_by_type),
-      };
-      defaults.display_list.concat(models);
+    // let subTreeItems = ['Cycle'];
+    // let models = ['Workflow', 'CycleTaskEntry',
+    //   'CycleTaskGroupObjectTask', 'CycleTaskGroupObject', 'CycleTaskGroup'];
+    // subTreeItems.forEach(function (item) {
+    //   let defaults = {
+    //     model_list: GGRC.tree_view.basic_model_list,
+    //     display_list: can.Map.keys(GGRC.tree_view.base_widgets_by_type),
+    //   };
+    //   defaults.display_list.concat(models);
 
-      treeWidgets.attr(item,
-        can.Map.keys(GGRC.tree_view.base_widgets_by_type).concat(models));
-      subTrees.attr(item, {
-        display_list: defaults.display_list
-          .concat(models),
-        model_list: defaults.model_list,
-      });
-    });
+    //   // ???
+    //   subTrees.attr(item, {
+    //     display_list: defaults.display_list
+    //       .concat(models),
+    //     model_list: defaults.model_list,
+    //   });
+    // });
 
     if (pageInstance instanceof CMS.Models.Workflow) {
       WorkflowExtension.init_widgets_for_workflow_page();

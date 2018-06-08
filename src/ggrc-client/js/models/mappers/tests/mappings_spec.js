@@ -54,13 +54,12 @@ describe('GGRC.Mappings', function () {
         'Workflow',
         'CycleTaskEntry',
         'CycleTaskGroupObjectTask',
-        'CycleTaskGroupObject',
         'CycleTaskGroup',
       ],
       notMappable: [
+        'TaskGroup',
         'CycleTaskEntry',
         'CycleTaskGroupObjectTask',
-        'CycleTaskGroupObject',
         'CycleTaskGroup',
       ],
     },
@@ -90,16 +89,16 @@ describe('GGRC.Mappings', function () {
   mappingRules = {
     AccessGroup: _.difference(filtered, ['AccessGroup']),
     Assessment: _.difference(filtered, ['Audit', 'Person', 'Program', 'Project',
-      'TaskGroup', 'Workflow', 'Assessment', 'Document']),
+      'Workflow', 'Assessment', 'Document']),
     AssessmentTemplate: _.difference(filtered, ['Audit', 'Person', 'Program',
-      'Project', 'TaskGroup', 'Workflow', 'Assessment', 'Document']),
+      'Project', 'Workflow', 'Assessment', 'Document']),
     Audit: _.difference(filtered, ['Audit', 'Person', 'Program', 'Project',
-      'TaskGroup', 'Workflow', 'Assessment', 'Document']),
+      'Workflow', 'Assessment', 'Document']),
     Clause: _.difference(filtered, ['Clause']),
     Contract: _.difference(filtered, directives),
     Control: filtered,
     CycleTaskGroupObjectTask: _.difference(filtered, ['Person',
-      'TaskGroup', 'Workflow', 'Assessment']),
+      'Workflow', 'Assessment']),
     DataAsset: filtered,
     Evidence: ['Assessment', 'Audit'],
     Document: _.difference(filtered, ['Audit', 'Assessment']),
@@ -109,8 +108,7 @@ describe('GGRC.Mappings', function () {
     Market: filtered,
     Objective: filtered,
     OrgGroup: filtered,
-    Person: _.difference(filtered, ['Person', 'Audit', 'TaskGroup',
-      'Workflow', 'Issue']),
+    Person: _.difference(filtered, ['Person', 'Audit', 'Workflow', 'Issue']),
     Policy: _.difference(filtered, directives),
     Process: filtered,
     Product: filtered,
@@ -124,8 +122,8 @@ describe('GGRC.Mappings', function () {
     Section: filtered,
     Standard: _.difference(filtered, directives),
     System: filtered,
-    TaskGroup: _.difference(filtered, ['Audit', 'Person',
-      'TaskGroup', 'Workflow', 'Assessment']),
+    TaskGroup: _.difference(filtered, ['Audit', 'Person', 'Workflow',
+      'Assessment']),
     Threat: filtered,
     Vendor: filtered,
   };
@@ -144,7 +142,6 @@ describe('GGRC.Mappings', function () {
     let modelsForTests = _.difference(allTypes, [
       'CycleTaskEntry',
       'CycleTaskGroup',
-      'CycleTaskGroupObject',
       'Workflow',
     ]);
 
@@ -154,7 +151,6 @@ describe('GGRC.Mappings', function () {
         let result = GGRC.Mappings.getMappingTypes(type, [], []);
         let resultGroups = Object.keys(result);
         let resultModels = getModelsFromGroups(result, EXPECTED_GROUPS);
-
         expect(EXPECTED_GROUPS).toEqual(resultGroups);
         expect(expectedModels.sort()).toEqual(resultModels.sort());
       });

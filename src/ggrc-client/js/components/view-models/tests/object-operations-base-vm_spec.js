@@ -28,7 +28,7 @@ describe('ObjectOperationsBaseVM', function () {
 
       result = baseVM.availableTypes();
       expect(GGRC.Mappings.getMappingTypes).toHaveBeenCalledWith('testObject',
-        [], ['test1', 'test2', 'TaskGroup']);
+        [], ['test1', 'test2']);
       expect(result).toEqual('types');
     });
   });

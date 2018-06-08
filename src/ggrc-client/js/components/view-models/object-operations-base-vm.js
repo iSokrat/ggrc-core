@@ -128,7 +128,7 @@ const ObjectOperationsBaseVM = can.Map.extend({
     let types = GGRC.Mappings.getMappingTypes(
       this.attr('object'),
       [],
-      getInScopeModels().concat('TaskGroup'));
+      getInScopeModels());
     return types;
   },
   object: '',
