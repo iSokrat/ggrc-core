@@ -20,15 +20,13 @@
         {{#if_equals reviewTask.status 'Declined'}}
             <div>Review was declined on {{#date instance.created_at}}{{/date}}.</div>
         {{/if_equals}}
-
-        <div {{#reviewTask}}{{data 'model'}}{{/reviewTask}} {{ (el) -> el.ggrc_controllers_quick_form({instance : el.data("model")}) }}>
+        <div>
           <button class="btn btn-mini btn-green change-task-status {{instance._disabled}} {{#if instance.snapshot}}disabled{{else}}{{#if instance.isRevision}}disabled{{/if}}{{/if}}"
-            ($click)="onApprove()"
-          >
+            ($click)="onApprove()">
             Approve
           </button>
           <a href="javascript://"
-            class="undoable btn btn-mini btn-red change-task-status {{instance._disabled}} {{#if instance.snapshot}}disabled{{else}}{{#if instance.isRevision}}disabled{{/if}}{{/if}}"
+            class="btn btn-mini btn-red change-task-status {{instance._disabled}} {{#if instance.snapshot}}disabled{{else}}{{#if instance.isRevision}}disabled{{/if}}{{/if}}"
             data-toggle="modal-ajax-form"
             data-object-singular="CycleTaskEntry"
             data-object-params='{
