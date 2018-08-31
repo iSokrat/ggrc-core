@@ -212,23 +212,12 @@ export default can.Control({
     let path;
     let instance;
     let index;
-    let cb;
     $('#extended-info').trigger('mouseleave'); // Make sure the extra info tooltip closes
 
     path = el.attr('name').split('.');
     instance = this.options.instance;
     index = 0;
     path.pop(); // remove the prop
-    cb = el.data('lookup-cb');
-
-    if (cb) {
-      cb = cb.split(' ');
-      instance[cb[0]](...cb.slice(1).concat([ui.item]));
-      setTimeout(function () {
-        el.val(ui.item.name || ui.item.email || ui.item.title, ui.item);
-      }, 0);
-      return;
-    }
 
     if (/^\d+$/.test(path[path.length - 1])) {
       index = parseInt(path.pop(), 10);
@@ -292,6 +281,7 @@ export default can.Control({
     ).done(this.proxy('draw'));
   },
 
+  // need to split this method to small pieces
   fetch_data: function (params) {
     let that = this;
     let dfd;
@@ -300,6 +290,7 @@ export default can.Control({
     params = params || this.find_params();
     params = params && params.serialize ? params.serialize() : params;
 
+    //
     if (this.options.skip_refresh && instance) {
       return new $.Deferred().resolve(instance);
     } else if (instance) {
@@ -344,6 +335,9 @@ export default can.Control({
       if (instance &&
         _.exists(instance, 'class.is_custom_attributable') &&
         !(instance instanceof Assessment)) {
+        // Setup caDefs for the instance.
+        // Is it really needed? We setup all ca definitions into init() method
+        // using CustomAttributeAccess.
         return $.when(
           instance.load_custom_attribute_definitions &&
           instance.load_custom_attribute_definitions(),
@@ -502,35 +496,18 @@ export default can.Control({
   set_value_from_element: function (el) {
     let name;
     let value;
-    let cb;
-    let instance = this.options.instance;
+
     el = el instanceof jQuery ? el : $(el);
     name = el.attr('name');
     value = el.val();
-    cb = el.data('lookup-cb');
 
     // If no model is specified, short circuit setting values
     // Used to support ad-hoc form elements in confirmation dialogs
     if (!this.options.model) {
       return;
     }
-    // if data was populated in a callback, use that data from the instance
-    // except if we are editing an instance and some fields are already populated
-    if (!_.isUndefined(el.attr('data-populated-in-callback')) &&
-      value === '') {
-      if (!_.isUndefined(instance[name])) {
-        if (typeof instance[name] === 'object' && instance[name] !== null) {
-          this.set_value({name: name, value: instance[name].id});
-        } else {
-          this.set_value({name: name, value: instance[name]});
-        }
-        return;
-      }
-    }
-    if (cb) {
-      cb = cb.split(' ');
-      instance[cb[0]](...cb.slice(1).concat([value]));
-    } else if (name) {
+
+    if (name) {
       this.set_value({name: name, value: value});
     }
   },
