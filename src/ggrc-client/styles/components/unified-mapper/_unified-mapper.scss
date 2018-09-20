@@ -175,7 +175,6 @@ mapper-results {
       }
     }
 
-    view-object-buttons,
     .related-assessments-button {
       display: flex;
 
@@ -183,10 +182,6 @@ mapper-results {
         position: relative;
         top: -1px;
       }
-    }
-
-    view-object-buttons {
-      width: $view-object-buttons-width;
     }
 
     .related-assessments-button {
@@ -404,7 +399,7 @@ mapper-results-items-header {
       @include cell-styles();
       font-size: 11px;
       text-transform: uppercase;
-      
+
       &_sortable {
         cursor: pointer;
       }
