@@ -12,8 +12,18 @@ import '../../comment/mapped-comments';
 import RefreshQueue from '../../../models/refresh_queue';
 import {updateStatus} from '../../../plugins/utils/workflow-utils';
 import {getPageInstance} from '../../../plugins/utils/current-page-utils';
+import Permission from '../../../permission';
 
 let viewModel = can.Map.extend({
+  define: {
+    isEditDenied: {
+      get() {
+        return !Permission
+          .is_allowed_for('update', this.attr('instance')) ||
+          !this.attr('cycle.is_current');
+      },
+    },
+  },
   showLink: function () {
     let pageInstance = getPageInstance();
 
