@@ -182,8 +182,6 @@ dashboard-js-template-files:
   - base_objects/task_group_subtree_add_item.mustache
   - base_objects/task_group_subtree.mustache
   - cycles/info.mustache
-  - cycle_task_entries/tree.mustache
-  - cycle_task_entries/tree_add_item.mustache
   - cycle_task_groups/info.mustache
   - cycle_task_groups/autocomplete_result.mustache
   - cycle_task_groups/extended_info.mustache
