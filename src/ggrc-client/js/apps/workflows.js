@@ -113,16 +113,11 @@ import * as businessModels from '../models/business-models';
           ['related_objects_as_source', 'related_objects_as_destination']
         ),
         /**
-         * "cycle", "cycle_task_entries" mappers are needed for mapped
-         * comments and objects under CycleTaskGroupObjectTask into
-         * mapping-tree-view component.
+         * "cycle" mapper is needed for objects mapped to
+         * CycleTaskGroupObjectTask into mapping-tree-view component.
          */
         cycle: Direct(
           'Cycle', 'cycle_task_group_object_tasks', 'cycle'),
-        cycle_task_entries: Direct(
-          'CycleTaskEntry',
-          'cycle_task_group_object_task',
-          'cycle_task_entries'),
         /**
          * This mapping name is needed for objects mapped to CTGOT.
          * It helps to filter results of objects mapped to CTGOT.
@@ -133,7 +128,6 @@ import * as businessModels from '../models/business-models';
           function (relatedObjects) {
             return !_.includes([
               'CycleTaskGroup',
-              'CycleTaskEntry',
               'Comment',
               'Document',
               'Person',
@@ -141,32 +135,6 @@ import * as businessModels from '../models/business-models';
             relatedObjects.instance.type);
           }
         ),
-      },
-      CycleTaskEntry: {
-        related_objects_as_source: Proxy(
-          null,
-          'destination', 'Relationship',
-          'source', 'related_destinations'
-        ),
-        related_objects_as_destination: Proxy(
-          null,
-          'source', 'Relationship',
-          'destination', 'related_sources'
-        ),
-        related_objects: Multi(
-          ['related_objects_as_source', 'related_objects_as_destination']
-        ),
-        destinations: Direct('Relationship', 'source', 'related_destinations'),
-        sources: Direct('Relationship', 'destination', 'related_sources'),
-        relationships: Multi(['sources', 'destinations']),
-        documents: TypeFilter('related_objects', 'Document'),
-        cycle: Direct(
-          'Cycle', 'cycle_task_entries', 'cycle'),
-        cycle_task_group_object_task: Direct(
-          'CycleTaskGroupObjectTask',
-          'cycle_task_entries',
-          'cycle_task_group_object_task'),
-        workflow: Cross('cycle', 'workflow'),
       },
     };
 
@@ -207,7 +175,7 @@ import * as businessModels from '../models/business-models';
     let pageInstance = getPageInstance();
     let treeWidgets = GGRC.tree_view.base_widgets_by_type;
     let subTrees = GGRC.tree_view.sub_tree_for;
-    let models = ['TaskGroup', 'Workflow', 'CycleTaskEntry',
+    let models = ['TaskGroup', 'Workflow',
       'CycleTaskGroupObjectTask', 'CycleTaskGroupObject', 'CycleTaskGroup'];
     _.forEach(_workflowObjectTypes, function (type) {
       let widget;
