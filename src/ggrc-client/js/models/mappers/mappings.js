@@ -394,45 +394,16 @@ export default can.Construct.extend({
     let that = this;
     let finalDefinition = {};
     if (definition._mixins) {
-      _.forEach(definition._mixins, function (mixin) {
-        if (typeof (mixin) === 'string') {
-          // If string, recursive lookup
-          if (!definitions[mixin]) {
-            console.warn('Undefined mixin: ' + mixin, definitions);
-          } else {
-            _.merge(finalDefinition,
-              that.reify_mixins(definitions[mixin], definitions));
-          }
-        } else if (_.isFunction(mixin)) {
-          // If function, call with current definition state
-          mixin(finalDefinition);
+      _.forEach(definition._mixins, function (name) {
+        if (!definitions[name]) {
+          console.warn('Undefined mixin: ' + name, definitions);
         } else {
-          // Otherwise, assume object and extend
-          if (finalDefinition._canonical && mixin._canonical) {
-            mixin = Object.assign({}, mixin);
-
-            _.forEach(mixin._canonical, function (types, mapping) {
-              if (finalDefinition._canonical[mapping]) {
-                if (!can.isArray(finalDefinition._canonical[mapping])) {
-                  finalDefinition._canonical[mapping] =
-                    [finalDefinition._canonical[mapping]];
-                }
-                finalDefinition._canonical[mapping] =
-                  can.unique(finalDefinition._canonical[mapping]
-                    .concat(types));
-              } else {
-                finalDefinition._canonical[mapping] = types;
-              }
-            });
-            finalDefinition._canonical = Object.assign({}, mixin._canonical,
-              finalDefinition._canonical);
-            delete mixin._canonical;
-          }
+          let mixin = that.reify_mixins(definitions[name], definitions);
           Object.assign(finalDefinition, mixin);
         }
       });
     }
-    _.merge(finalDefinition, definition);
+    Object.assign(finalDefinition, definition);
     delete finalDefinition._mixins;
     return finalDefinition;
   },
