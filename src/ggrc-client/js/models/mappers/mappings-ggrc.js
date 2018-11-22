@@ -33,39 +33,38 @@ const scopingObjects = [
 ];
 
 new Mappings({
-  base: {},
   relatedMappings: {
-    _related: ['Assessment', 'Person', 'TaskGroup', 'Workflow'],
+    related: ['Assessment', 'Person', 'TaskGroup', 'Workflow'],
   },
 
   Person: {
-    _related: ['CycleTaskGroupObjectTask', 'TaskGroupTask', 'Workflow',
+    related: ['CycleTaskGroupObjectTask', 'TaskGroupTask', 'Workflow',
       ...getRoleableModels().map((model) => model.model_singular)],
   },
 
   Program: {
-    _canonical: [...coreObjects, 'Document'],
-    _related: ['Audit', 'Person', 'TaskGroup', 'Workflow'],
+    map: [...coreObjects, 'Document'],
+    related: ['Audit', 'Person', 'TaskGroup', 'Workflow'],
   },
 
   Document: {
-    _canonical: [...coreObjects, 'Program'],
-    _related: ['Person'],
+    map: [...coreObjects, 'Program'],
+    related: ['Person'],
   },
 
   // Core objects
   coreObjectsMappings: {
     _mixins: ['relatedMappings'],
-    _canonical: _.difference(businessObjects, ['Assessment']),
+    map: _.difference(businessObjects, ['Assessment']),
   },
 
   Issue: {
-    _canonical: [...coreObjects, 'Document', 'Program'],
-    _related: ['Assessment', 'Audit', 'Person', 'TaskGroup', 'Workflow'],
+    map: [...coreObjects, 'Document', 'Program'],
+    related: ['Assessment', 'Audit', 'Person', 'TaskGroup', 'Workflow'],
   },
   Contract: {
     _mixins: ['coreObjectsMappings'],
-    _canonical: _.difference(businessObjects, ['Assessment', 'Contract']),
+    map: _.difference(businessObjects, ['Assessment', 'Contract']),
   },
   Control: {
     _mixins: ['coreObjectsMappings'],
@@ -75,24 +74,24 @@ new Mappings({
   },
   Policy: {
     _mixins: ['coreObjectsMappings'],
-    _canonical: _.difference(businessObjects, ['Assessment', 'Policy']),
+    map: _.difference(businessObjects, ['Assessment', 'Policy']),
   },
   Requirement: {
     _mixins: ['coreObjectsMappings'],
   },
   Regulation: {
-    _canonical: _.difference(businessObjects,
+    map: _.difference(businessObjects,
       [...scopingObjects, 'Assessment', 'Regulation']),
-    _related:
+    related:
       [...scopingObjects, 'Assessment', 'Person', 'TaskGroup', 'Workflow'],
   },
   Risk: {
     _mixins: ['coreObjectsMappings'],
   },
   Standard: {
-    _canonical: _.difference(businessObjects,
+    map: _.difference(businessObjects,
       [...scopingObjects, 'Assessment', 'Standard']),
-    _related:
+    related:
       [...scopingObjects, 'Assessment', 'Person', 'TaskGroup', 'Workflow'],
   },
   Threat: {
@@ -101,14 +100,14 @@ new Mappings({
 
   // Scoping objects
   scopingObjectsMappings: {
-    _canonical: _.difference(businessObjects,
+    map: _.difference(businessObjects,
       ['Assessment', 'Standard', 'Regulation']),
-    _related: ['Assessment', 'Person', 'Regulation', 'Standard', 'TaskGroup',
+    related: ['Assessment', 'Person', 'Regulation', 'Standard', 'TaskGroup',
       'Workflow'],
   },
   AccessGroup: {
     _mixins: ['scopingObjectsMappings'],
-    _canonical: _.difference(businessObjects,
+    map: _.difference(businessObjects,
       ['Assessment', 'AccessGroup', 'Standard', 'Regulation']),
   },
   DataAsset: {
@@ -151,31 +150,31 @@ new Mappings({
   // Audit
   Audit: {
     _mixins: ['relatedObject'],
-    _canonical: coreObjects,
-    _related:
+    map: coreObjects,
+    related:
       ['Assessment', 'AssessmentTemplate', 'Evidence', 'Person', 'Program'],
   },
   Assessment: {
     _mixins: ['relatedObject'],
-    _canonical: coreObjects,
-    _related: ['Audit', 'Evidence', 'Person'],
+    map: coreObjects,
+    related: ['Audit', 'Evidence', 'Person'],
   },
   Evidence: {
-    _related: ['Assessment', 'Audit', 'Person'],
+    related: ['Assessment', 'Audit', 'Person'],
   },
   AssessmentTemplate: {
-    _related: ['Audit'],
+    related: ['Audit'],
   },
 
   // Workflow
   TaskGroup: {
-    _canonical: [...coreObjects, 'Program'],
+    map: [...coreObjects, 'Program'],
   },
   TaskGroupTask: {
-    _related: ['Person', 'Workflow'],
+    related: ['Person', 'Workflow'],
   },
   Workflow: {
-    _related: ['Person', 'TaskGroup', 'TaskGroupTask'],
+    related: ['Person', 'TaskGroup', 'TaskGroupTask'],
   },
   CycleTaskGroupObjectTask: {
     // It is needed for an object list generation. This object list
@@ -183,8 +182,8 @@ new Mappings({
     // Types placed within this collection will be intersected
     // with TreeViewConfig.base_widgets_by_type["CycleTaskGroupObjectTask"]
     // collection. The result of the operation is the total list.
-    _canonical: [...coreObjects, 'Audit', 'Program'],
-    _related: ['Person'],
+    map: [...coreObjects, 'Audit', 'Program'],
+    related: ['Person'],
     // Needed for related_objects mapper
     related_objects_as_source: Proxy(
       null,
@@ -232,7 +231,7 @@ new Mappings({
     role: Direct('Role', 'user_roles', 'role'),
   },
   MultitypeSearch: {
-    _canonical: [
+    map: [
       'AccessGroup', 'Assessment', 'AssessmentTemplate', 'Audit',
       'Contract', 'Control', 'CycleTaskGroupObjectTask', 'DataAsset',
       'Document', 'Evidence', 'Facility', 'Issue', 'Market', 'Metric',
