@@ -51,7 +51,6 @@
             {{else}}
               <a
                 href="{{urlPath}}{{ internav_href }}"
-                {{#is_mappable_type instance.type model.shortName}}
                 {{#is_allowed_to_map instance model.shortName}}
                 {{^if_equals model.shortName 'Assessment'}}
                   data-clickable="true"
@@ -61,7 +60,6 @@
                   data-join-object-type="{{instance.class.shortName}}"
                 {{/if_equals}}
                 {{/is_allowed_to_map}}
-                {{/is_mappable_type}}
                 >
                 <div class="oneline">
                   <i class="fa fa-fw fa-{{ internav_icon }} color"></i>
