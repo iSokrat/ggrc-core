@@ -32,6 +32,8 @@ const scopingObjects = [
   'TechnologyEnvironment', 'Vendor',
 ];
 
+const snapshotableObjects = GGRC.config.snapshotable_objects;
+
 new Mappings({
   relatedMappings: {
     related: ['Assessment', 'Person', 'TaskGroup', 'Workflow'],
@@ -149,14 +151,12 @@ new Mappings({
 
   // Audit
   Audit: {
-    _mixins: ['relatedObject'],
-    map: coreObjects,
+    map: [...snapshotableObjects, 'Issue'],
     related:
       ['Assessment', 'AssessmentTemplate', 'Evidence', 'Person', 'Program'],
   },
   Assessment: {
-    _mixins: ['relatedObject'],
-    map: coreObjects,
+    map: [...snapshotableObjects, 'Issue'],
     related: ['Audit', 'Evidence', 'Person'],
   },
   Evidence: {
