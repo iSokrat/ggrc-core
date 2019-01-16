@@ -14,14 +14,8 @@ import Mappings from './mappings';
 import CustomAttributeDefinition from '../custom-attributes/custom-attribute-definition';
 import AccessControlRole from '../custom-roles/access-control-role';
 import {getRoleableModels} from '../../plugins/utils/models-utils';
-
-const businessObjects = [
-  'Assessment', 'AccessGroup', 'Audit', 'Contract', 'Control', 'DataAsset',
-  'Document', 'Facility', 'Issue', 'Market', 'Metric', 'Objective', 'OrgGroup',
-  'Policy', 'Process', 'Product', 'ProductGroup', 'Program', 'Project',
-  'Regulation', 'Requirement', 'Risk', 'Standard', 'System',
-  'TechnologyEnvironment', 'Threat', 'Vendor',
-];
+import * as MappingsMixins from './mappings-mixins';
+import {businessObjects} from './mappings-types-collection';
 
 const coreObjects = _.difference(businessObjects,
   ['Assessment', 'Audit', 'Document', 'Program']);
@@ -35,10 +29,6 @@ const scopingObjects = [
 const snapshotableObjects = GGRC.config.snapshotable_objects;
 
 new Mappings({
-  relatedMappings: {
-    related: ['Assessment', 'Person', 'TaskGroup', 'Workflow'],
-  },
-
   Person: {
     related: ['CycleTaskGroupObjectTask', 'TaskGroupTask', 'Workflow',
       ...getRoleableModels().map((model) => model.model_singular)],
@@ -54,19 +44,13 @@ new Mappings({
     related: ['Person'],
   },
 
-  // Core objects
-  coreObjectsMappings: {
-    _mixins: ['relatedMappings'],
-    map: _.difference(businessObjects, ['Assessment']),
-  },
-
   Issue: {
     map: [...coreObjects, 'Document', 'Program'],
     related: ['Assessment', 'Audit', 'Person', 'TaskGroup', 'Workflow'],
   },
   Contract: {
-    _mixins: ['coreObjectsMappings'],
     map: _.difference(businessObjects, ['Assessment', 'Contract']),
+    ...MappingsMixins.coreObjectsMappings,
   },
   Control: {
     _mixins: ['coreObjectsMappings'],
@@ -100,17 +84,10 @@ new Mappings({
     _mixins: ['coreObjectsMappings'],
   },
 
-  // Scoping objects
-  scopingObjectsMappings: {
-    map: _.difference(businessObjects,
-      ['Assessment', 'Standard', 'Regulation']),
-    related: ['Assessment', 'Person', 'Regulation', 'Standard', 'TaskGroup',
-      'Workflow'],
-  },
   AccessGroup: {
-    _mixins: ['scopingObjectsMappings'],
     map: _.difference(businessObjects,
       ['Assessment', 'AccessGroup', 'Standard', 'Regulation']),
+    ...MappingsMixins.scopingObjectsMappings,
   },
   DataAsset: {
     _mixins: ['scopingObjectsMappings'],
