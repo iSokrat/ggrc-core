@@ -10,9 +10,9 @@ export default can.Component.extend({
   tag: 'mapping-tree-view',
   template,
   viewModel: {
-    treeViewClass: '@',
     parentInstance: null,
     mappedObjects: [],
+    itemTemplate: GGRC.mustache_path + '/base_templates/subtree.mustache',
   },
   init(element) {
     _.forEach(['mapping', 'itemTemplate'], (prop) => {

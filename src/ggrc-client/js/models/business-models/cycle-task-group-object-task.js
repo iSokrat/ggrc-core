@@ -95,7 +95,6 @@ export default Cacheable('CMS.Models.CycleTaskGroupObjectTask', {
   info_pane_options: {
     mapped_objects: {
       mapping: 'info_related_objects',
-      show_view: GGRC.mustache_path + '/base_templates/subtree.mustache',
     },
   },
   tree_view_options: {
