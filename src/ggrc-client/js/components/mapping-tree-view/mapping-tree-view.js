@@ -12,14 +12,9 @@ export default can.Component.extend({
   viewModel: {
     parentInstance: null,
     mappedObjects: [],
-    itemTemplate: GGRC.mustache_path + '/base_templates/subtree.mustache',
   },
   init(element) {
-    _.forEach(['mapping', 'itemTemplate'], (prop) => {
-      this.viewModel.attr(prop,
-        $(element).attr(can.camelCaseToDashCase(prop))
-      );
-    });
+    this.viewModel.attr('mapping', $(element).attr('mapping'));
 
     Mappings
       .getBinding(
