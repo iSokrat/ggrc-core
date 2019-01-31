@@ -6,23 +6,27 @@
 import template from './mapping-tree-view.mustache';
 import Mappings from '../../models/mappers/mappings';
 
+const viewModel = can.Map.extend({
+  parentInstance: null,
+  mappedObjects: [],
+});
+
+const init = function (element) {
+  this.viewModel.attr('mapping', $(element).attr('mapping'));
+
+  Mappings
+    .getBinding(
+      this.viewModel.mapping,
+      this.viewModel.parentInstance
+    ).refresh_instances()
+    .then((mappedObjects) => {
+      this.viewModel.attr('mappedObjects').replace(mappedObjects);
+    });
+};
+
 export default can.Component.extend({
   tag: 'mapping-tree-view',
   template,
-  viewModel: {
-    parentInstance: null,
-    mappedObjects: [],
-  },
-  init(element) {
-    this.viewModel.attr('mapping', $(element).attr('mapping'));
-
-    Mappings
-      .getBinding(
-        this.viewModel.mapping,
-        this.viewModel.parentInstance
-      ).refresh_instances()
-      .then((mappedObjects) => {
-        this.viewModel.attr('mappedObjects').replace(mappedObjects);
-      });
-  },
+  viewModel,
+  init,
 });
