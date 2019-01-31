@@ -160,19 +160,17 @@
               >
               </cycle-task-objects>
 
-              {{^if_in instance.status "Finished,Verified"}}
-                {{#is_allowed 'update' instance context='for'}}
-                  <a
-                    class="btn btn-white btn-small"
-                    href="javascript://"
-                    data-placement="right"
-                    data-toggle="unified-mapper"
-                    data-join-object-id="{{instance.id}}"
-                    data-join-object-type="{{instance.class.shortName}}">
-                    Map Objects
-                  </a>
-                {{/is_allowed}}
-              {{/if_in}}
+              {{#if showMapObjectsButton}}
+                <a
+                  class="btn btn-white btn-small"
+                  href="javascript://"
+                  data-placement="right"
+                  data-toggle="unified-mapper"
+                  data-join-object-id="{{instance.id}}"
+                  data-join-object-type="{{instance.class.shortName}}">
+                  Map Objects
+                </a>
+              {{/if}}
             </div>
           </div>
 
