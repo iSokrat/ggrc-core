@@ -92,11 +92,6 @@ export default Cacheable('CMS.Models.CycleTaskGroupObjectTask', {
     context: Stub,
     cycle: Stub,
   },
-  info_pane_options: {
-    mapped_objects: {
-      mapping: 'info_related_objects',
-    },
-  },
   tree_view_options: {
     add_item_view: _mustachePath + '/tree_add_item.mustache',
     attr_list: [

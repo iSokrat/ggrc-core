@@ -5,23 +5,33 @@
 
 import template from './cycle-task-objects.mustache';
 import Mappings from '../../../models/mappers/mappings';
+import {loadObjectsByTypes} from '../../../plugins/utils/query-api-utils';
 
 const viewModel = can.Map.extend({
-  parentInstance: null,
+  instance: null,
   mappedObjects: [],
+  convertToMappedObjects(objects) {
+    return objects.map((object) => ({
+      object,
+      iconClass: `fa-${_.snakeCase(object.type)}`,
+    }));
+  },
+  async initMappedObjects() {
+    const mappingTypes = Mappings.getMappingList('CycleTaskGroupObjectTask');
+    const fields = ['type', 'title', 'viewLink', 'description', 'notes'];
+    const rawMappedObjects = await loadObjectsByTypes(
+      this.attr('instance'),
+      mappingTypes,
+      fields,
+    );
+    this.attr('mappedObjects').replace(this.convertToMappedObjects(
+      rawMappedObjects
+    ));
+  },
 });
 
-const init = function (element) {
-  this.viewModel.attr('mapping', $(element).attr('mapping'));
-
-  Mappings
-    .getBinding(
-      this.viewModel.mapping,
-      this.viewModel.parentInstance
-    ).refresh_instances()
-    .then((mappedObjects) => {
-      this.viewModel.attr('mappedObjects').replace(mappedObjects);
-    });
+const init = function () {
+  this.viewModel.initMappedObjects();
 };
 
 export default can.Component.extend({
