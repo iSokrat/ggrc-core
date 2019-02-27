@@ -7,6 +7,7 @@ import {
   externalDirectiveObjects,
   scopingObjects,
 } from '../../plugins/models-types-collections';
+import {isSnapshot} from './snapshot-utils';
 
 /**
  * Util methods for integration with GGRCQ.
@@ -32,6 +33,19 @@ function isChangeableExternally(instance) {
   return instance &&
     instance.constructor &&
     instance.constructor.isChangeableExternally;
+}
+
+/**
+ * Determine whether instance is proposable externally.
+ * @param {*} instance the model instance
+ * @return {Boolean} true or false
+ */
+function isProposableExternally(instance) {
+  return (
+    instance.constructor.isProposable &&
+    isChangeableExternally(instance) &&
+    !isSnapshot(instance)
+  );
 }
 
 /**
@@ -261,6 +275,22 @@ function getCreateObjectUrl(model) {
   });
 }
 
+/**
+* Get url to instance's attribute
+* @param {Object} instance - The model instance
+* @param {String} attributeName - Name of attribute
+* @return {String} Url to attribute
+*/
+function getProposalAttrUrl(instance, attributeName) {
+  return getUrl({
+    model: instance.constructor.table_singular,
+    path: instance.constructor.table_singular,
+    slug: instance.slug,
+    view: 'info',
+    params: `proposal=${attributeName}`,
+  });
+}
+
 export {
   hasQuestions,
   isChangeableExternally,
@@ -275,4 +305,6 @@ export {
   getUrl,
   getProposalsUrl,
   getChangeLogUrl,
+  getProposalAttrUrl,
+  isProposableExternally,
 };
