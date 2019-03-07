@@ -33,4 +33,7 @@
       </custom-roles-modal>
     {{/if}}
   </div>
+  <request-review {review}="instance"
+                  {(modal-state)}="modalState">
+  </request-review>
 </div>

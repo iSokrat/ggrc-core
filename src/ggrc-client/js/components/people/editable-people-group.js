@@ -85,9 +85,20 @@ let viewModel = peopleGroupVM.extend({
     this.attr('editableMode', false);
   },
   cancel: function () {
+    debugger;
     this.changeEditableMode(false);
   },
   changeEditableMode: function (editableMode) {
+    if (this.attr('instance.type') === 'Assessment' &&
+      this.attr('title') === 'Verifiers') {
+      this.dispatch({
+        type: 'requestReview',
+        modalState: {
+          open: true,
+        },
+      });
+      return;
+    }
     this.attr('editableMode', editableMode);
     this.dispatch({
       type: 'changeEditableMode',
