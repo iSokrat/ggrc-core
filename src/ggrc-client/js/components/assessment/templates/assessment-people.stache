@@ -34,6 +34,7 @@
     {{/if}}
   </div>
   <request-review {review}="instance"
-                  {(modal-state)}="modalState">
+                  {(modal-state)}="modalState"
+                  {review-groups}="reviewGroups">
   </request-review>
 </div>
