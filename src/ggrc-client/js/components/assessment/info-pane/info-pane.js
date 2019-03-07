@@ -65,7 +65,7 @@ import {relatedAssessmentsTypes} from '../../../plugins/utils/models-utils';
 import {notifier, notifierXHR} from '../../../plugins/utils/notifiers-utils';
 import Evidence from '../../../models/business-models/evidence';
 import * as businessModels from '../../../models/business-models';
-import * as LocalStorageUtils from '../../../plugins/utils/local-storage-utils'
+import * as LocalStorageUtils from '../../../plugins/utils/local-storage-utils';
 
 const editableStatuses = ['Not Started', 'In Progress', 'Rework Needed'];
 

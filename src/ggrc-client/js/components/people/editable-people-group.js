@@ -85,7 +85,6 @@ let viewModel = peopleGroupVM.extend({
     this.attr('editableMode', false);
   },
   cancel: function () {
-    debugger;
     this.changeEditableMode(false);
   },
   changeEditableMode: function (editableMode) {

@@ -8,6 +8,7 @@ import {ROLES_CONFLICT} from '../../events/eventTypes';
 import '../custom-roles/custom-roles';
 import '../custom-roles/custom-roles-modal';
 import template from './templates/assessment-people.stache';
+import * as localStorage from '../../plugins/utils/local-storage-utils';
 
 const tag = 'assessment-people';
 
@@ -34,6 +35,15 @@ export default can.Component.extend({
     requestReview(ev) {
       this.attr('modalState.open', ev.modalState.open);
     },
+    save(ev) {
+      let groups = ev.reviewGroups;
+      this.attr('reviewGroups', groups);
+      if (this.attr('instance.id')) {
+        localStorage.setReviewStateByAssessmentId(
+          this.attr('instance.id'), groups.attr()
+        );
+      }
+    }
   },
   events: {
     [`{instance} ${ROLES_CONFLICT.type}`]: function (ev, args) {

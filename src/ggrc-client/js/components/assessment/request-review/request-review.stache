@@ -7,11 +7,13 @@
   {state}="modalState"
   {replace-content}="true"
   {extra-css-class}="'request-review-modal'"
+  {instance}="reviewGroups"
+  (update-review-groups)="save(%event)"
 >
   <div class="request-review-modal__header">
     <div class="simple-modal__header">
       <div class="simple-modal__header-text">Request Review</div>
-      <button type="button" class="btn btn-small btn-icon" {{#if loading}}disabled{{/if}} ($click)="cancel()">
+      <button type="button" class="btn btn-small btn-icon" {{#if loading}}disabled{{/if}} ($click)="hide">
         <i class="fa fa-times black"></i>
       </button>
     </div>

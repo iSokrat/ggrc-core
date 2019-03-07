@@ -7,7 +7,7 @@
   <related-people-access-control
     class="width-100"
     {instance}="review"
-    {groups}="reviewGroups">
+    {(groups)}="instance">
     {{#groups}}
       <related-people-access-control-group
         class="people-group"
