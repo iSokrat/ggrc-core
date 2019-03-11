@@ -696,12 +696,6 @@ export default can.Component.extend({
     },
     updateInstance() {
       this.attr('instance').save();
-      this.initializeFormFields();
-      this.initGlobalAttributes();
-      this.updateRelatedItems();
-      this.initializeDeferredSave();
-      this.setVerifierRoleId();
-      this.initReviewState();
     },
   },
   init: function () {
