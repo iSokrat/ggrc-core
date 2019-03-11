@@ -535,7 +535,6 @@ export default can.Component.extend({
       } else {
         this.attr('isReviewInProgress', false);
       }
-
     },
     onStateChange: function (event) {
       const isUndo = event.undo;
@@ -568,6 +567,9 @@ export default can.Component.extend({
       ) {
         this.attr('reviewGroups').forEach((group) => {
           group.attr('reviewed', false);
+          if (group.id === 3 || group.id === 4) {
+            group.attr('disabled', true);
+          }
         });
         this.attr('reviewGroups', reviewGroups.attr());
       } else if (
@@ -694,6 +696,12 @@ export default can.Component.extend({
     },
     updateInstance() {
       this.attr('instance').save();
+      this.initializeFormFields();
+      this.initGlobalAttributes();
+      this.updateRelatedItems();
+      this.initializeDeferredSave();
+      this.setVerifierRoleId();
+      this.initReviewState();
     },
   },
   init: function () {
