@@ -95,11 +95,6 @@ export default can.Component.extend({
             .filter((group) => group.reviewed).length;
         },
       },
-      isReviewInProgress: {
-        get() {
-          return this.attr('instance.status') === 'In Review';
-        },
-      },
       verifiers: {
         get: function () {
           let acl = this.attr('instance.access_control_list');
@@ -251,6 +246,7 @@ export default can.Component.extend({
     formState: {},
     noItemsText: '',
     currentState: '',
+    isReviewInProgress: false,
     previousStatus: undefined,
     initialState: 'Not Started',
     deprecatedState: 'Deprecated',
@@ -533,6 +529,12 @@ export default can.Component.extend({
     },
     setCurrentState(state) {
       this.attr('currentState', state);
+      if (state === 'In Review') {
+        this.attr('isReviewInProgress', true);
+      } else {
+        this.attr('isReviewInProgress', false);
+      }
+
     },
     onStateChange: function (event) {
       const isUndo = event.undo;
@@ -680,6 +682,12 @@ export default can.Component.extend({
       }
 
       this.attr('reviewGroups', reviewState);
+      this.attr('isReviewInProgress',
+        this.attr('instance.status') === 'In Review'
+      );
+    },
+    updateInstance() {
+      this.attr('instance').save();
     },
   },
   init: function () {
