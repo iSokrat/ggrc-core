@@ -43,7 +43,7 @@ export default can.Component.extend({
           this.attr('instance.id'), groups.attr()
         );
       }
-    }
+    },
   },
   events: {
     [`{instance} ${ROLES_CONFLICT.type}`]: function (ev, args) {
