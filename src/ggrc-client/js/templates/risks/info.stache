@@ -13,56 +13,118 @@
           <div class="info-pane__body">
             <div class="info-pane__main-content {{^if isSnapshot}}info-pane__main-content-with-sidebar{{/if}}">
               <object-review {instance}="instance"></object-review>
-              {{> /static/templates/base_objects/description.stache}}
-              {{> /static/templates/base_objects/test_plan.stache}}
 
               <div class="row-fluid wrap-row">
-                <div class="span12">
-                  <h6>Risk Type</h6>
-                  <read-more
-                    {text}="risk_type"
-                    {handle-markdown}="instance.class.isChangeableExternally">
-                  </read-more>
+                <div data-test-id="title_description_7a906d2e" class="span12">
+                  <proposable-attribute
+                    {instance}="instance"
+                    {title}="'Description'"
+                    {attr-name}="'description'"
+                  >
+                    <div data-test-id="title_description_content_7a906d2e" class="rtf-block">
+                      <read-more
+                        {text}="description"
+                        {handle-markdown}="instance.class.isChangeableExternally">
+                      </read-more>
+                    </div>
+                  </proposable-attribute>
                 </div>
               </div>
 
-              {{#if_helpers '\n #if' threat_source '\n or #if' isRevision}}
-                <div class="row-fluid wrap-row">
-                  <div class="span12">
-                    <h6>Threat Source</h6>
+              <div class="row-fluid wrap-row">
+                <div class="span12">
+                  <proposable-attribute
+                    {instance}="instance"
+                    {title}="'Assessment Procedure'"
+                    {attr-name}="'test_plan'"
+                  >
+                    <div class="rtf-block">
+                      <read-more
+                        {text}="test_plan"
+                        {handle-markdown}="instance.class.isChangeableExternally">
+                      </read-more>
+                    </div>
+                  </proposable-attribute>
+                </div>
+              </div>
+
+              <div class="row-fluid wrap-row">
+                <div class="span12">
+                  <proposable-attribute
+                    {instance}="instance"
+                    {title}="'Risk Type'"
+                    {attr-name}="'risk_type'"
+                  >
+                    <read-more
+                      {text}="risk_type"
+                      {handle-markdown}="instance.class.isChangeableExternally">
+                    </read-more>
+                  </proposable-attribute>
+                </div>
+              </div>
+
+              <div class="row-fluid wrap-row">
+                <div class="span12">
+                  <proposable-attribute
+                    {instance}="instance"
+                    {title}="'Threat Source'"
+                    {attr-name}="'threat_source'"
+                  >
                     <read-more
                       {text}="threat_source"
                       {handle-markdown}="instance.class.isChangeableExternally">
                     </read-more>
-                  </div>
+                  </proposable-attribute>
                 </div>
-              {{/if_helpers}}
+              </div>
 
-              {{#if_helpers '\n #if' threat_event '\n or #if' isRevision}}
-                <div class="row-fluid wrap-row">
-                  <div class="span12">
-                    <h6>Threat Event</h6>
+              <div class="row-fluid wrap-row">
+                <div class="span12">
+                  <proposable-attribute
+                    {instance}="instance"
+                    {title}="'Threat Event'"
+                    {attr-name}="'threat_event'"
+                  >
                     <read-more
                       {text}="threat_event"
                       {handle-markdown}="instance.class.isChangeableExternally">
                     </read-more>
-                  </div>
+                  </proposable-attribute>
                 </div>
-              {{/if_helpers}}
+              </div>
 
-              {{#if_helpers '\n #if' vulnerability '\n or #if' isRevision}}
-                <div class="row-fluid wrap-row">
-                  <div class="span12">
-                    <h6>Vulnerability</h6>
+              <div class="row-fluid wrap-row">
+                <div class="span12">
+                  <proposable-attribute
+                    {instance}="instance"
+                    {title}="'Vulnerability'"
+                    {attr-name}="'vulnerability'"
+                  >
                     <read-more
                       {text}="vulnerability"
                       {handle-markdown}="instance.class.isChangeableExternally">
                     </read-more>
-                  </div>
+                  </proposable-attribute>
                 </div>
-              {{/if_helpers}}
+              </div>
 
-              {{> /static/templates/base_objects/notes.stache}}
+              <div class="row-fluid wrap-row">
+                <div data-test-id="title_notes_ef5bc3a71e88" class="span12">
+                  <proposable-attribute
+                    {instance}="instance"
+                    {title}="'Notes'"
+                    {attr-name}="'notes'"
+                  >
+                    <div data-test-id="title_notes_content_ef5bc3a71e88" class="rtf-block">
+                      <read-more
+                        {text}="notes"
+                        {handle-markdown}="instance.class.isChangeableExternally">
+                      </read-more>
+                    </div>
+                  </proposable-attribute>
+                </div>
+              </div>
+
               {{> /static/templates/base_objects/contacts.stache}}
               {{> /static/templates/base_objects/reference-urls.stache}}
               <div class="row-fluid wrap-row">
@@ -93,23 +155,39 @@
                 <div class="hidden-fields-area">
                   <div class="row-fluid wrap-row">
                     <div class="span4">
-                      <h6>Code</h6>
-                      <p>
-                        {{slug}}
-                      </p>
-                    </div>
-                    <div class="span4">
-                      <h6>Effective Date</h6>
-                      {{#if start_date}}
+                      <div class="action-toolbar-container">
+                        <div class="action-toolbar">
+                          <h6 class="action-toolbar__header">
+                            Code
+                          </h6>
+                        </div>
                         <p>
-                          {{localize_date start_date}}
+                          {{slug}}
                         </p>
-                      {{else}}
-                        <span class="empty-message">None</span>
-                      {{/if}}
+                      </div>
                     </div>
                     <div class="span4">
-                      <h6>Last Deprecated Date</h6>
+                      <proposable-attribute
+                        {instance}="instance"
+                        {title}="'Effective Date'"
+                        {attr-name}="'start_date'"
+                      >
+                        {{#if start_date}}
+                          <p>
+                            {{localize_date start_date}}
+                          </p>
+                        {{else}}
+                          <span class="empty-message">None</span>
+                        {{/if}}
+                      </proposable-attribute>
+                    </div>
+                    <div class="span4">
+                      <div class="action-toolbar-container">
+                        <div class="action-toolbar">
+                          <h6 class="action-toolbar__header">
+                            Last Deprecated Date
+                          </h6>
+                        </div>
                         {{#if last_deprecated_date}}
                           <p>
                             {{localize_date last_deprecated_date}}
@@ -123,6 +201,7 @@
                             <span class="empty-message">None</span>
                           {{/if}}
                         {{/if}}
+                      </div>
                     </div>
                   </div><!-- row-fluid end -->
                 </div><!-- hidden-fields-area end -->
