@@ -7,6 +7,7 @@ import {
   externalDirectiveObjects,
   scopingObjects,
 } from '../../plugins/models-types-collections';
+import Risk from '../../models/business-models/risk';
 import {isSnapshot} from './snapshot-utils';
 
 /**
@@ -291,6 +292,22 @@ function getProposalAttrUrl(instance, attributeName) {
   });
 }
 
+/**
+ * Returns text for Create and Map functionality.
+ * @param {object} destinationModel The object model.
+ * @return {string} Text.
+ */
+function getCreateAndMapExternallyText(destinationModel) { // eslint-disable-line
+  const object = destinationModel === Risk ? 'controls, ' : '';
+  const listOfObjects = `scope, ${object}standards and regulations`;
+
+  return `${destinationModel.title_singular} creation and mapping
+    ${destinationModel.title_plural.toLowerCase()} to ${listOfObjects}
+    flows are currently disabled. </br> </br> Please click
+    “Proceed in the new tab” button to go to the new interface and complete
+    these actions there.`;
+}
+
 export {
   hasQuestions,
   isChangeableExternally,
@@ -307,4 +324,5 @@ export {
   getChangeLogUrl,
   getProposalAttrUrl,
   isProposableExternally,
+  getCreateAndMapExternallyText,
 };

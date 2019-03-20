@@ -20,6 +20,7 @@ import {
 import {
   getCreateObjectUrl,
   getMappingUrl,
+  getCreateAndMapExternallyText,
 } from '../../plugins/utils/ggrcq-utils';
 
 export default can.Component.extend({
@@ -73,20 +74,16 @@ export default can.Component.extend({
     destinationModel: null,
     newEntries: [],
     getCreateAndMapExternallyText() {
-      let destinationModel = this.attr('destinationModel');
-
-      return `${destinationModel.title_singular} creation and mapping
-        ${destinationModel.title_plural.toLowerCase()} to scope, standards and
-        regulations flows are currently disabled. </br> </br> Please click
-        “Proceed in the new tab” button to go to the new interface and complete
-        these actions there.`;
+      return getCreateAndMapExternallyText(this.attr('destinationModel'));
     },
     getCreateAndReturnBackText() {
       let sourceModel = this.attr('source').constructor;
       let destinationModel = this.attr('destinationModel');
 
-      return `Redirecting to Controls Library in the new interface to
-        create a ${destinationModel.title_singular.toLowerCase()}. </br> </br>
+      return `Redirecting to ${destinationModel.title_plural} Library in the
+        new interface to
+        create a ${destinationModel.title_singular.toLowerCase()}.
+        </br> </br>
         Until transition to the new UI is complete, you will need to come back
         here after creation and reopen this window to complete mapping to this
         ${sourceModel.title_singular.toLowerCase()}.`;
