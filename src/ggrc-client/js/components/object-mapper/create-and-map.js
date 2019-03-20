@@ -85,7 +85,7 @@ export default can.Component.extend({
       let sourceModel = this.attr('source').constructor;
       let destinationModel = this.attr('destinationModel');
 
-      return `Redirecting to Controls Library in the new interface to
+      return `Redirecting to ${destinationModel.title_plural} Library in the new interface to
         create a ${destinationModel.title_singular.toLowerCase()}. </br> </br>
         Until transition to the new UI is complete, you will need to come back
         here after creation and reopen this window to complete mapping to this
