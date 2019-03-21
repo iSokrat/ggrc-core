@@ -54,7 +54,6 @@ export default can.Component.extend({
     tabId: '@', // used in REFRESH_TAB_CONTENT event handler
     panels: [],
     tabIndex: null,
-    extraClasses: '@',
     clearCache: function () {
       this.attr('forceClearContent', true);
       this.attr('forceClearContent', false);

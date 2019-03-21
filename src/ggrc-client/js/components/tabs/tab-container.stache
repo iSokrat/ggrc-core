@@ -21,7 +21,7 @@
           </li>
         {{/case}}
         {{#case "panel"}}
-          <li class="{{extraClasses}} {{#if active}}active{{/if}}">
+          <li class="{{#if active}}active{{/if}}">
             <a class="nav-tabs__panel"
               ($click)="setActivePanel(tabIndex)">
               {{titleText}}
