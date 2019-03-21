@@ -4,14 +4,7 @@
 */
 
 import Mixin from './mixin';
-import {REFRESH_PROPOSAL_DIFF} from '../../events/eventTypes';
 
 export default Mixin({
   isProposable: true,
-}, {
-  after_update() {
-    this.dispatch({
-      ...REFRESH_PROPOSAL_DIFF,
-    });
-  },
 });

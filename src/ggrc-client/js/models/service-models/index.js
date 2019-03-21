@@ -11,7 +11,6 @@ export {default as Label} from './label';
 export {default as MultitypeSearch} from './multitype-search';
 export {default as NotificationConfig} from './notification-config';
 export {default as Option} from './option';
-export {default as Proposal} from './proposal';
 export {default as Relationship} from './relationship';
 export {default as Review} from './review';
 export {default as Revision} from './revision';

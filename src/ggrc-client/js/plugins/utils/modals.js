@@ -21,7 +21,6 @@ const CONTENT_VIEW_WARNING =
   `${path}/base_objects/confirm_warning.stache`;
 const BUTTON_VIEW_CONFIRM = `${path}/modals/confirm_button.stache`;
 const CONTENT_VIEW_CONFIRM = `${path}/modals/confirm.stache`;
-const BUTTON_CREATE_PROPOSAL = `${path}/modals/create_proposal.stache`;
 
 /**
  * Shows a warning popup within given options. If a user confirms
@@ -207,5 +206,4 @@ export {
   BUTTON_VIEW_SAVE_CANCEL,
   BUTTON_VIEW_SAVE_CANCEL_DELETE,
   BUTTON_VIEW_CONFIRM_CANCEL,
-  BUTTON_CREATE_PROPOSAL,
 };

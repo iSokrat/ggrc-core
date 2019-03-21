@@ -73,16 +73,6 @@ const REFRESH_TAB_CONTENT = {
 };
 
 /**
- * Refreshes diff of proposals
- * @event refreshProposalDiff
- * @type {object}
- * @property {string} type - Event name.
- */
-const REFRESH_PROPOSAL_DIFF = {
-  type: 'refreshProposalDiff',
-};
-
-/**
  * Navigate to info-pane's tab
  * @event navigateToTab
  * @type {object}
@@ -95,7 +85,7 @@ const NAVIGATE_TO_TAB = {
 
 /**
  * Refreshes comments of instance
- * @event refreshProposalDiff
+ * @event refreshComments
  * @type {object}
  * @property {string} type - Event name.
  */
@@ -221,7 +211,6 @@ export {
   DESTINATION_UNMAPPED,
   REFRESH_TAB_CONTENT,
   NAVIGATE_TO_TAB,
-  REFRESH_PROPOSAL_DIFF,
   REFRESH_COMMENTS,
   RELATED_ITEMS_LOADED,
   COMMENT_CREATED,

@@ -666,7 +666,7 @@ p {
             color: $darkBlue;
           }
         }
-      } 
+      }
     }
   }
 }
@@ -738,9 +738,6 @@ p {
   }
   &.state-reviewed {
     background: $status-reviewed;
-  }
-  &.state-proposed {
-    background: $status-proposed;
   }
   &.state-notstarted,
   &.state-draft,

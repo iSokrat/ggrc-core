@@ -8,7 +8,6 @@
   tabindex="4"
   class="custom-roles-modal"
   {instance}="instance"
-  {is-proposal}="isProposal"
   {is-new-instance}="isNewInstance"
   {include-roles}="includeRoles"
   {exclude-roles}="excludeRoles"

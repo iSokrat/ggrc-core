@@ -25,7 +25,6 @@ import '../components/redirects/proposable-attribute/proposable-attribute';
 import '../components/general-page-header/general-page-header';
 import * as TreeViewUtils from '../plugins/utils/tree-view-utils';
 import {confirm} from '../plugins/utils/modals';
-import {getInstanceView} from '../plugins/utils/object-history-utils';
 import {getPageInstance} from '../plugins/utils/current-page-utils';
 
 export const pinContentHiddenClass = 'pin-content--hidden';

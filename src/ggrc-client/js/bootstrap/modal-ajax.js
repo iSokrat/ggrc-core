@@ -7,7 +7,6 @@ import Spinner from 'spin.js';
 import {
   warning,
   BUTTON_VIEW_SAVE_CANCEL_DELETE,
-  BUTTON_CREATE_PROPOSAL,
 } from '../plugins/utils/modals';
 import {
   hasWarningType,
@@ -103,7 +102,6 @@ let handlers = {
     let extendNewInstance = $trigger.attr('data-extend-new-instance');
     let triggerParent = $trigger.closest('.add-button');
     let model = modalModels[$trigger.attr('data-object-singular')];
-    let isProposal = $trigger.data('is-proposal');
     let instance;
     let modalTitle;
     let contentView;
@@ -125,10 +123,6 @@ let handlers = {
       model.title_singular ||
       $trigger.attr('data-object-singular'));
 
-    if (isProposal) {
-      modalTitle = `Proposal for ${model.title_singular}`;
-    }
-
     contentView = $trigger.data('template') ||
       GGRC.templates_path + '/' +
       $trigger.attr('data-object-plural') +
@@ -141,9 +135,7 @@ let handlers = {
       new_object_form: !$trigger.attr('data-object-id'),
       object_params: objectParams,
       extendNewInstance,
-      button_view: isProposal ?
-        BUTTON_CREATE_PROPOSAL :
-        BUTTON_VIEW_SAVE_CANCEL_DELETE,
+      button_view: BUTTON_VIEW_SAVE_CANCEL_DELETE,
       model: model,
       oldData: {
         status: instance && instance.status, // status before changing
@@ -155,7 +147,6 @@ let handlers = {
       skip_refresh: !needToRefresh,
       modal_title: objectParams.modal_title || modalTitle,
       content_view: contentView,
-      isProposal: isProposal,
       $trigger: $trigger,
     });
 

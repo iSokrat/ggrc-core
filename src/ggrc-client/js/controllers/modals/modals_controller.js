@@ -77,7 +77,6 @@ export default can.Control.extend({
     reset_visible: false,
     extraCssClass: '',
     afterFetch: function () {},
-    isProposal: false,
     isSaving: false, // is there a save/map operation currently in progress
   },
 
@@ -376,7 +375,6 @@ export default can.Control.extend({
     }
 
     let modalTitle = this.options.modal_title;
-    let isProposal = this.options.isProposal;
     let isObjectModal = modalTitle && (modalTitle.indexOf('Edit') === 0 ||
       modalTitle.indexOf('New') === 0);
     let $form;
@@ -406,7 +404,7 @@ export default can.Control.extend({
       this.options.$footer.html(footer);
     }
 
-    if (customAttributes !== null && (isObjectModal || isProposal)) {
+    if (customAttributes !== null && (isObjectModal)) {
       this.options.$content.append(customAttributes);
     }
 

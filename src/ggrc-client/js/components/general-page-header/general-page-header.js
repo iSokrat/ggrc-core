@@ -17,16 +17,6 @@ const viewModel = can.Map.extend({
         return isProposableExternally(this.attr('instance'));
       },
     },
-    showProposalButton: {
-      get() {
-        const instance = this.attr('instance');
-        return (
-          instance.class.isProposable &&
-          !isChangeableExternally(instance) &&
-          !isSnapshot(instance)
-        );
-      },
-    },
   },
   instance: null,
 });

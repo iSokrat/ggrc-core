@@ -5,9 +5,6 @@
 
 import {confirm} from '../../plugins/utils/modals';
 import {prepareCustomAttributes} from '../../plugins/utils/ca-utils';
-import {
-  getInstanceView,
-} from '../../plugins/utils/object-history-utils';
 import RefreshQueue from '../../models/refresh_queue';
 import {notifier} from '../../plugins/utils/notifiers-utils';
 import Revision from '../../models/service-models/revision';
@@ -25,7 +22,6 @@ export default can.Component.extend({
     instance: null,
     leftRevisionId: null,
     rightRevision: null,
-    proposal: null,
     buttonView: null,
     modalConfirm: null,
     modalTitle: null,
@@ -40,7 +36,6 @@ export default can.Component.extend({
       const rightRevision = this.attr('rightRevision');
       const newRevisionID = rightRevision.id;
       const displayDescriptions = that.attr('displayDescriptions');
-      const proposal = this.attr('proposal');
       confirm({
         modal_title: this.attr('modalTitle'),
         modal_description: 'Loading...',
@@ -53,7 +48,6 @@ export default can.Component.extend({
         instance: this.attr('instance'),
         rightRevision: rightRevision,
         displayDescriptions: displayDescriptions,
-        proposal: proposal,
         afterFetch: function (target) {
           let confirmSelf = this;
           that.getRevisions(currentRevisionID, newRevisionID)
@@ -68,8 +62,7 @@ export default can.Component.extend({
                   that.attr('leftRevisionDescription'));
                 const rightRevisionData = that.getRevisionData(
                   data[1],
-                  that.attr('rightRevisionDescription'),
-                  proposal);
+                  that.attr('rightRevisionDescription'));
 
                 confirmSelf.attr('leftRevisionData', leftRevisionData);
                 confirmSelf.attr('rightRevisionData', rightRevisionData);
@@ -90,11 +83,11 @@ export default can.Component.extend({
         },
       }, this.updateRevision.bind(this));
     },
-    getRevisionData(revision, description, proposal) {
+    getRevisionData(revision, description) {
       const revisionData = {
         description,
-        date: proposal ? proposal.created_at : revision.updated_at,
-        author: proposal ? proposal.proposed_by : revision.modified_by,
+        date: revision.updated_at,
+        author: revision.modified_by,
       };
 
       return revisionData;
@@ -156,10 +149,8 @@ export default can.Component.extend({
       });
     },
     prepareInstances: function (data) {
-      return data.map((value, index) => {
+      return data.map((value) => {
         let content = value.content;
-        let revision = {};
-        const proposalContent = this.attr('rightRevision.content');
         const model = businessModels[value.resource_type];
 
         content.attr('isRevision', true);
@@ -172,30 +163,8 @@ export default can.Component.extend({
           });
         }
 
-        if (!this.attr('proposal')) {
-          return {instance: new model(content), isSnapshot: true};
-        }
+        return {instance: new model(content), isSnapshot: true};
 
-        if (index === 1) {
-          const instWithProposedValues = new can.Map(content);
-          // new model method overrides modified fields
-          can.batch.start();
-          can.Map.keys(proposalContent).forEach((key) => {
-            if (Array.isArray(proposalContent[key])) {
-              instWithProposedValues.attr(key).replace(proposalContent[key]);
-            } else {
-              instWithProposedValues.attr(key, proposalContent[key]);
-            }
-          });
-          can.batch.stop();
-          content = instWithProposedValues.attr();
-        }
-
-        revision.isSnapshot = true;
-        revision.instance = new model(content);
-        revision.instance.isRevision = true;
-
-        return revision;
       });
     },
     updateRevision: function () {

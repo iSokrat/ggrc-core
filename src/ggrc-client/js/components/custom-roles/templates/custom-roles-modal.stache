@@ -26,7 +26,6 @@
             {title}="title"
             {people}="people"
             {instance}="instance"
-            {is-proposal}="isProposal"
             {updatable-group-id}="updatableGroupId"
             {read-only}="readOnly"
             data-original-title="{{groupTooltip}}"

@@ -17,7 +17,6 @@ export default can.Component.extend({
   viewModel: {
     instance: {},
     isNewInstance: false,
-    isProposal: false,
     includeRoles: [],
     excludeRoles: [],
     readOnly: false,
