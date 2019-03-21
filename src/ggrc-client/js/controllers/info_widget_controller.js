@@ -4,10 +4,6 @@
 */
 
 import '../components/comment/comments-section';
-import '../components/related-objects/proposals/related-proposals';
-import '../components/related-objects/proposals/related-proposals-item';
-import '../components/related-objects/revisions/related-revisions';
-import '../components/revision-history/restore-revision';
 import {
   getPageInstance,
   getPageModel,
