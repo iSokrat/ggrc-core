@@ -25,17 +25,6 @@
             <a class="nav-tabs__panel"
               ($click)="setActivePanel(tabIndex)">
               {{titleText}}
-              {{#if canDisplayWarning}}
-                {{#if warningState}}
-                  <span
-                    class="nav-tab-warning"
-                    rel="tooltip"
-                    data-original-title="{{warningText}}"
-                    data-placement="bottom">
-                      <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-                  </span>
-                {{/if}}
-              {{/if}}
             </a>
           </li>
         {{/case}}

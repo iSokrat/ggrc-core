@@ -54,9 +54,6 @@ export default can.Component.extend({
     tabId: '@', // used in REFRESH_TAB_CONTENT event handler
     panels: [],
     tabIndex: null,
-    canDisplayWarning: false,
-    warningState: false,
-    warningText: '@',
     extraClasses: '@',
     clearCache: function () {
       this.attr('forceClearContent', true);
@@ -87,9 +84,6 @@ export default can.Component.extend({
         panels.splice(indexToRemove, 1);
         panels.dispatch('panelRemoved');
       }
-    },
-    updateWarningState(event) {
-      this.attr('warningState', event.warning);
     },
   },
   events: {
