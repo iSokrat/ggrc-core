@@ -85,12 +85,7 @@ export default can.Component.extend({
     },
     refreshPage() {
       const instance = this.attr('instance');
-      instance.refresh().then(() => {
-        instance.dispatch({
-          ...REFRESH_TAB_CONTENT,
-          tabId: 'tab-related-proposals',
-        });
-      });
+      instance.refresh();
     },
   },
   events: {

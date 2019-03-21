@@ -81,17 +81,6 @@ export default can.Component.extend({
          ':' + this.attr('commentRevision.custom_attribute_stored_value');
         },
       },
-      isProposalHeaderLink: {
-        get() {
-          return this.attr('itemData.header_url_link') === 'proposal_link';
-        },
-      },
-    },
-    openProposalTab() {
-      this.attr('baseInstance').dispatch({
-        ...NAVIGATE_TO_TAB,
-        tabId: 'tab-related-proposals',
-      });
     },
   },
 });

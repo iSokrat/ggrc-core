@@ -61,10 +61,6 @@ export default can.Component.extend({
         () => {
           this.attr('loading', false);
           instance.restore(true);
-          instance.dispatch({
-            ...REFRESH_TAB_CONTENT,
-            tabId: 'tab-related-proposals',
-          });
           instance.dispatch(REFRESH_COMMENTS);
           this.closeModal(element);
         }, (error) => {

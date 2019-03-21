@@ -181,11 +181,6 @@
     margin: 0;
   }
 
-  .comment-object-item__proposal-link {
-    color: $proposalLink;
-    font-size: 11px;
-  }
-
   .comment-object-item__header {
     display: flex;
     flex-wrap: wrap;
@@ -204,10 +199,6 @@
       font-size: 11px;
       font-style: italic;
       color: #999;
-    }
-
-    .comment-object-item__header-link {
-      margin-right: 6px;
     }
   }
 

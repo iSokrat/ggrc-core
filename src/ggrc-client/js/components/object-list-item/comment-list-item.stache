@@ -5,26 +5,13 @@
 
 <div class="comment-object-item">
     <div class="comment-object-item__header">
-      {{#if header_url_link}}
-        <div class="comment-object-item__header-link">
-          {{#if isProposalHeaderLink}}
-            <a class="comment-object-item__proposal-link"
-              href="javascript:void(0)"
-              ($click)="openProposalTab()">
-                CHANGE PROPOSAL
-            </a>
-          {{else}}
-            <a href="header_url_link">TODO: Name of header link</a>
-          {{/if}}
-        </div>
-      {{/if}}
       {{#if commentAuthor}}
         <div class="comment-object-item__header-author">
           <person-data {person}="commentAuthor"></person-data>
         </div>
       {{/if}}
       <div class="comment-object-item__header-author-info">
-        {{commentAuthorType}} 
+        {{commentAuthorType}}
         {{#if commentCreationDate}}
           {{dateTime commentCreationDate}}
         {{else}}
