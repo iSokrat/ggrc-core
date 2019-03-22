@@ -25,9 +25,6 @@ export default can.Component.extend({
     buttonView: null,
     modalConfirm: null,
     modalTitle: null,
-    displayDescriptions: false,
-    leftRevisionDescription: '',
-    rightRevisionDescription: '',
     compareIt: function () {
       const instance = this.attr('instance');
       const view = getInstanceView(instance);
@@ -35,7 +32,7 @@ export default can.Component.extend({
       const currentRevisionID = this.attr('leftRevisionId');
       const rightRevision = this.attr('rightRevision');
       const newRevisionID = rightRevision.id;
-      const displayDescriptions = that.attr('displayDescriptions');
+
       confirm({
         modal_title: this.attr('modalTitle'),
         modal_description: 'Loading...',
@@ -47,26 +44,12 @@ export default can.Component.extend({
         button_view: this.attr('buttonView'),
         instance: this.attr('instance'),
         rightRevision: rightRevision,
-        displayDescriptions: displayDescriptions,
         afterFetch: function (target) {
-          let confirmSelf = this;
           that.getRevisions(currentRevisionID, newRevisionID)
             .then(function (data) {
               let revisions = that.prepareInstances(data);
               let fragLeft = can.view(view, revisions[0]);
               let fragRight = can.view(view, revisions[1]);
-
-              if (displayDescriptions) {
-                const leftRevisionData = that.getRevisionData(
-                  data[0],
-                  that.attr('leftRevisionDescription'));
-                const rightRevisionData = that.getRevisionData(
-                  data[1],
-                  that.attr('rightRevisionDescription'));
-
-                confirmSelf.attr('leftRevisionData', leftRevisionData);
-                confirmSelf.attr('rightRevisionData', rightRevisionData);
-              }
 
               // people should be preloaded before highlighting differences
               // to avoid breaking UI markup as highlightDifference
@@ -82,15 +65,6 @@ export default can.Component.extend({
             });
         },
       }, this.updateRevision.bind(this));
-    },
-    getRevisionData(revision, description) {
-      const revisionData = {
-        description,
-        date: revision.updated_at,
-        author: revision.modified_by,
-      };
-
-      return revisionData;
     },
     /**
      * Loads to cache people from access control list
