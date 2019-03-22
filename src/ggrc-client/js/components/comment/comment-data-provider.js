@@ -4,10 +4,7 @@
  */
 
 import * as QueryAPI from '../../plugins/utils/query-api-utils';
-import {
-  REFRESH_COMMENTS,
-  REFRESH_MAPPED_COUNTER,
-} from '../../events/eventTypes';
+import {REFRESH_MAPPED_COUNTER} from '../../events/eventTypes';
 import Relationship from '../../models/service-models/relationship';
 import Context from '../../models/service-models/context';
 
@@ -94,10 +91,5 @@ export default can.Component.extend({
   },
   init() {
     this.viewModel.loadComments();
-  },
-  events: {
-    [`{viewModel.instance} ${REFRESH_COMMENTS.type}`]() {
-      this.viewModel.loadComments();
-    },
   },
 });

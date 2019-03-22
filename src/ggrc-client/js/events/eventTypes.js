@@ -84,16 +84,6 @@ const NAVIGATE_TO_TAB = {
 };
 
 /**
- * Refreshes comments of instance
- * @event refreshComments
- * @type {object}
- * @property {string} type - Event name.
- */
-const REFRESH_COMMENTS = {
-  type: 'refreshComments',
-};
-
-/**
  * Notifies that related items are loaded
  * @event RELATED_ITEMS_LOADED
  * @type {object}
@@ -211,7 +201,6 @@ export {
   DESTINATION_UNMAPPED,
   REFRESH_TAB_CONTENT,
   NAVIGATE_TO_TAB,
-  REFRESH_COMMENTS,
   RELATED_ITEMS_LOADED,
   COMMENT_CREATED,
   BEFORE_MAPPING,
