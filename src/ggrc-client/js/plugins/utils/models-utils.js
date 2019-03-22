@@ -47,37 +47,6 @@ const objectTypeDecisionTree = Object.freeze({
   key_report: businessModels.KeyReport,
 });
 
-const getModelInstance = (id, type, requiredAttr) => {
-  const promise = new Promise((resolve, reject) => {
-    let modelInstance;
-
-    if (!id || !type || !requiredAttr) {
-      reject();
-    }
-
-    modelInstance = allModels[type].findInCacheById(id) || {};
-
-    if (modelInstance && modelInstance.hasOwnProperty(requiredAttr)) {
-      resolve(modelInstance);
-    } else {
-      modelInstance = new allModels[type]({id: id});
-      new RefreshQueue()
-        .enqueue(modelInstance)
-        .trigger()
-        .done((data) => {
-          data = Array.isArray(data) ? data[0] : data;
-          resolve(data);
-        })
-        .fail(function () {
-          notifier('error', `Failed to fetch data for ${type}: ${id}.`);
-          reject();
-        });
-    }
-  });
-
-  return promise;
-};
-
 const inferObjectType = (data) => {
   if (!data) {
     return null;
@@ -158,7 +127,6 @@ function getCustomAttributableModels() { // eslint-disable-line
 }
 
 export {
-  getModelInstance,
   hasRelatedAssessments,
   relatedAssessmentsTypes,
   inferObjectType,

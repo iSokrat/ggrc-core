@@ -42,16 +42,6 @@ const getRole = (type, name) => {
 };
 
 /**
- * Returns the role from global ACL by ID.
- *
- * @param {number} id - Id of role.
- * @return {object|null}
- */
-const getRoleById = (id) => {
-  return ACL.ids[id];
-};
-
-/**
  * Compute a list of people that have `roleName` granted on `instance`.
  *
  * @param {Cacheable} instance - a model instance
@@ -128,6 +118,5 @@ export {
   peopleWithRoleId,
   getRolesForType,
   getRole,
-  getRoleById,
   isAuditor,
 };
