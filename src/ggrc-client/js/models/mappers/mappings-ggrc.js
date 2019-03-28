@@ -102,8 +102,8 @@ new Mappings({
   },
   Control: {
     map: _.difference(businessObjects,
-      ['Assessment', ...scopingObjects, ...externalDirectiveObjects]),
-    externalMap: [...scopingObjects, ...externalDirectiveObjects],
+      ['Assessment', ...scopingObjects, ...externalDirectiveObjects, 'Risk']),
+    externalMap: [...scopingObjects, ...externalDirectiveObjects, 'Risk'],
     unmap: _.difference(businessObjects, ['Assessment', 'Audit']),
     indirectMappings: ['Assessment', 'Person', 'TaskGroup', 'Workflow'],
   },
@@ -130,8 +130,8 @@ new Mappings({
   Risk: {
     map: _.difference(businessObjects, ['Assessment',
       ...scopingObjects,
-      ...externalDirectiveObjects]),
-    externalMap: [...scopingObjects, ...externalDirectiveObjects],
+      ...externalDirectiveObjects, 'Control']),
+    externalMap: [...scopingObjects, ...externalDirectiveObjects, 'Control'],
     unmap: _.difference(businessObjects, ['Assessment', 'Audit']),
     indirectMappings: ['Assessment', 'Person', 'TaskGroup', 'Workflow'],
   },
