@@ -14,6 +14,12 @@ import '../related-objects/related-people-access-control';
 import template from './detailed-business-object-list-item.stache';
 
 const tag = 'detailed-business-object-list-item';
+
+const VISIBLE_ROLES = {
+  Control: ['Admin', 'Control Operators', 'Control Owners', 'Other Contacts'],
+  Risk: ['Admin', 'Risk Owners', 'Other Contacts'],
+};
+
 /**
  * Assessment specific mapped objects popover view component
  */
@@ -55,15 +61,10 @@ export default can.Component.extend({
       },
       visibleRoles: {
         get: function () {
-          let roles;
-          if (this.attr('itemData.type') === 'Control') {
-            roles = [
-              'Admin', 'Control Operators', 'Control Owners', 'Other Contacts',
-            ];
-          } else {
-            roles = ['Admin', 'Primary Contacts', 'Secondary Contacts'];
-          }
-          return roles;
+          const defaultList = [
+            'Admin', 'Primary Contacts', 'Secondary Contacts',
+          ];
+          return VISIBLE_ROLES[this.attr('itemData.type')] || defaultList;
         },
       },
     },
