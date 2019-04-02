@@ -27,3 +27,25 @@ class TestProgram(TestCase):
     self.assert200(response)
     audit = self.refresh_object(all_models.Audit, id_=self.audit_id)
     self.assertIsNotNone(audit)
+
+
+class TestMegaProgram(TestCase):
+  """Mega Program test cases"""
+
+  def setUp(self):
+    """Setup tests"""
+    self.api = api_helper.Api()
+
+  def test_is_mega_attr(self):
+    """Test is_mega attribute of program"""
+    with factories.single_commit():
+      program_child = factories.ProgramFactory()
+      program_parent = factories.ProgramFactory()
+      factories.RelationshipFactory(source=program_parent,
+                                    destination=program_child)
+    program_child_id = program_child.id
+    program_parent_id = program_parent.id
+    response = self.api.get(all_models.Program, program_child_id)
+    self.assertEqual(response.json["program"]["is_mega"], False)
+    response = self.api.get(all_models.Program, program_parent_id)
+    self.assertEqual(response.json["program"]["is_mega"], True)
