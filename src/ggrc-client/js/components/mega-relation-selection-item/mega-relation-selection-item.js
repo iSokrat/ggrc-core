@@ -13,27 +13,17 @@ export default can.Component.extend({
     mapAsChild: null,
     isDisabled: false,
     id: null,
+    element: null,
+    switchRelation(mapAsChild) {
+      can.trigger(this.attr('element'), 'mapAsChild', {
+        id: this.attr('id'),
+        val: mapAsChild ? 'child' : 'parent',
+      });
+    },
   },
   events: {
-    inserted(el) {
-      const val = this.viewModel.attr('mapAsChild');
-      const trueBox = el[0].querySelector('[value=true]');
-      const falseBox = el[0].querySelector('[value=false]');
-
-      trueBox.checked = val === null ? false : !!val;
-      falseBox.checked = val === null ? false : !val;
-    },
-    click: function (el, ev) {
-      let val = el[0].querySelector('input[type=radio]:checked').value;
-      val = val === 'true' ? true : (val === 'false' ? false : val);
-
-      can.trigger(this.element, 'mapAsChild', {
-        id: this.viewModel.attr('id'),
-        val: val === true ? 'child' : 'parent',
-      });
-
-      // to prevent expanding of a row in mapper
-      ev.stopPropagation();
+    inserted(element) {
+      this.viewModel.attr('element', element);
     },
   },
 });

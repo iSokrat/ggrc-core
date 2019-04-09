@@ -6,13 +6,15 @@
   <input
     type="radio"
     name="map_as--{{id}}"
-    value="false"
+    ($click)="switchRelation(false)"
+    {{{^if mapAsChild}}checked{{/if}}
     {{#if isDisabled}}disabled{{/if}}> Parent
 </label>
 <label>
   <input
     type="radio"
     name="map_as--{{id}}"
-    value="true"
+    ($click)="switchRelation(true)"
+    {{#if mapAsChild}}checked{{/if}}
     {{#if isDisabled}}disabled{{/if}}> Child
 </label>
