@@ -6,7 +6,9 @@
 import canStache from 'can-stache';
 import canMap from 'can-map';
 import canComponent from 'can-component';
+import loSome from 'lodash/some';
 import '../../dropdown/multiselect-dropdown';
+import '../../autocomplete/autocomplete-component';
 import template from './download-template.stache';
 import {downloadTemplate, download} from '../../../plugins/utils/import-export-utils';
 import {backendGdriveClient} from '../../../plugins/ggrc-gapi-client';
@@ -22,13 +24,21 @@ const importOptions = GGRC.Bootstrap.importable.map((el) => {
   };
 });
 const viewModel = canMap.extend({
-  define: {},
+  define: {
+    showExtraFields: {
+      get() {
+        const selected = this.attr('selected');
+        return loSome(selected, (item) => item.name === 'Assessment');
+      },
+    },
+  },
   modalTitle: 'Download Template',
   modalState: {
     open: false,
     result: {},
   },
   isLoading: false,
+  templates: [],
   selected: [],
   importableModels: importOptions,
   close() {
@@ -40,6 +50,7 @@ const viewModel = canMap.extend({
     this.attr('importableModels').forEach((element) => {
       element.attr('checked', false);
     });
+    this.attr('templates', []);
   },
   showDialog() {
     this.attr('modalState.open', true);
@@ -58,12 +69,62 @@ const viewModel = canMap.extend({
     let objects = [];
 
     objects = Array.from(selected).map(({name}) => {
-      return {
+      const preparedObject = {
         object_name: name,
       };
+
+      if (name === 'Assessment') {
+        this.prepareTemplateIds(preparedObject);
+      }
+
+      return preparedObject;
     });
 
     return objects;
+  },
+  prepareTemplateIds(preparedObject) {
+    preparedObject.template_ids = this.attr('templates')
+      .map(({id}) => id)
+      .filter((id) => !!id);
+  },
+  addTemplate() {
+    this.attr('templates').push({
+      id: null,
+      value: null,
+      isDuplicate: false,
+    });
+  },
+  removeTemplate(index) {
+    this.attr('templates').splice(index, 1);
+    this.calculateDuplicates();
+  },
+  selectTemplate(selectedItem, index) {
+    const {id, title} = selectedItem;
+
+    this.attr('templates')[index].attr({
+      id: id,
+      value: title,
+    });
+
+    this.calculateDuplicates();
+
+    // setting 'value' of autocomplete to display
+    // selected item right inside autocomplete
+    selectedItem.value = selectedItem.title;
+  },
+  calculateDuplicates() {
+    const uniqIds = new Set();
+
+    this.attr('templates').forEach((template, ind) => {
+      if (template.id) {
+        if (!uniqIds.has(template.id)) {
+          uniqIds.add(template.id);
+          this.attr(`templates.${ind}.isDuplicate`, false);
+        } else {
+          this.attr(`templates.${ind}.isDuplicate`, true);
+        }
+      }
+    });
   },
   downloadCSV() {
     let objects = this.prepareSelected();
