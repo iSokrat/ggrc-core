@@ -95,36 +95,43 @@ const viewModel = canMap.extend({
     });
   },
   removeTemplate(index) {
-    this.attr('templates').splice(index, 1);
-    this.calculateDuplicates();
+    const [removedTemplate] = this.attr('templates').splice(index, 1);
+
+    this.updateDuplicationAfterRemove(removedTemplate.attr('id'));
   },
   selectTemplate(selectedItem, index) {
-    const {id, title} = selectedItem;
+    const {id: templateId, title} = selectedItem;
 
     this.attr('templates')[index].attr({
-      id: id,
+      id: templateId,
       value: title,
     });
 
-    this.calculateDuplicates();
+    this.updateDuplicationAfterSelect(templateId, index);
 
     // setting 'value' of autocomplete to display
     // selected item right inside autocomplete
     selectedItem.value = selectedItem.title;
   },
-  calculateDuplicates() {
-    const uniqIds = new Set();
+  updateDuplicationAfterRemove(templateId) {
+    const duplicates = this.attr('templates')
+      .filter((template) => template.attr('id') === templateId);
 
-    this.attr('templates').forEach((template, ind) => {
-      if (template.id) {
-        if (!uniqIds.has(template.id)) {
-          uniqIds.add(template.id);
-          this.attr(`templates.${ind}.isDuplicate`, false);
-        } else {
-          this.attr(`templates.${ind}.isDuplicate`, true);
-        }
-      }
-    });
+    // if there is one template with the same id as was for the removed template
+    if (duplicates.length === 1) {
+      duplicates[0].attr('isDuplicate', false);
+    }
+  },
+  updateDuplicationAfterSelect(templateId, templateIndex) {
+    const templates = this.attr('templates');
+    const isDuplicated = loSome(templates, (template, index) =>
+      index !== templateIndex &&
+      template.attr('id') === templateId
+    );
+
+    if (isDuplicated) {
+      templates[templateIndex].attr('isDuplicate', true);
+    }
   },
   downloadCSV() {
     let objects = this.prepareSelected();
