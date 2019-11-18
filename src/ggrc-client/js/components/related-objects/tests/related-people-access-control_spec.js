@@ -566,6 +566,7 @@ describe('related-people-access-control component', () => {
           }],
           required: roles[1].mandatory,
           singleUserRole: false,
+          externalLinkParam: null,
         };
         expect(result).toEqual(group);
       }
@@ -580,6 +581,7 @@ describe('related-people-access-control component', () => {
           people: [],
           required: roles[1].mandatory,
           singleUserRole: false,
+          externalLinkParam: null,
         };
         expect(result).toEqual(group);
       }
@@ -593,6 +595,7 @@ describe('related-people-access-control component', () => {
         people: [],
         required: roles[1].mandatory,
         singleUserRole: true,
+        externalLinkParam: null,
       };
       ViewModel.singleUserRoles = {'Role Name2': true};
 
@@ -610,6 +613,7 @@ describe('related-people-access-control component', () => {
         people: [],
         required: roles[1].mandatory,
         singleUserRole: false,
+        externalLinkParam: null,
       };
       ViewModel.singleUserRoles = {'Role Name1': true};
 
@@ -618,6 +622,16 @@ describe('related-people-access-control component', () => {
       expect(result).toEqual(group);
     }
     );
+
+    it('should generate group with parameter needed for the link to external' +
+    ' service in case if this parameter is defined for the passed role', () => {
+      const externalName = 'some_value';
+      roles[1].external_name = externalName;
+
+      const result = viewModel.buildGroups(roles[1], [{person: {id: 4}}]);
+
+      expect(result.externalLinkParam).toBe(externalName);
+    });
   });
 
   describe('"getRoleList" method', () => {
