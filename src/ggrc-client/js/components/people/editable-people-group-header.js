@@ -30,6 +30,9 @@ const ViewModel = canDefineMap.extend({
   redirectionEnabled: {
     value: false,
   },
+  externalLinkParam: {
+    value: null,
+  },
   people: {
     value: () => [],
   },

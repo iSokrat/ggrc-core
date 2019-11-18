@@ -49,6 +49,7 @@
                       <editable-people-group-header
                         editableMode:from="editableMode"
                         redirectionEnabled:from="redirectionEnabled"
+                        externalLinkParam:from="externalLinkParam"
                         isLoading:from="isLoading"
                         canEdit:from="canEdit"
                         title:from="title"

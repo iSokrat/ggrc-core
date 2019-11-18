@@ -24,11 +24,13 @@
         <role-attr-names-provider
           modelType:from="instance.constructor.model_singular"
           roleName:from="title"
+          externalLinkParam:from="externalLinkParam"
         >
           {{#if instance.constructor.isProposable}}
             <proposable-control
               instance:from="instance"
               attrName:from="linkAttrName"
+              isCustomAttribute:from="true"
             ></proposable-control>
           {{else}}
             <external-control

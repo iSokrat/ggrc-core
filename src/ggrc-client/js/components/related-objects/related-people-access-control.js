@@ -199,6 +199,7 @@ const ViewModel = canDefineMap.extend({
       people: this.getPeople(roleAssignments, groupId),
       required: role.mandatory,
       singleUserRole: singleUserRole,
+      externalLinkParam: role.external_name || null,
     };
   },
   getPeople(roleAssignments, groupId) {
