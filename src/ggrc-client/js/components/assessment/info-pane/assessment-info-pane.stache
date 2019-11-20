@@ -11,6 +11,7 @@
       <tab-container
         instance:from="instance">
           <tab-panel panels:bind="panels" titleText:from="'Assessment'">
+          <web-greeting name:from="name" />
         <div class="assessment-info-pane info-pane__body">
             <div class="assessment-attributes info-pane__main-content info-pane__main-content-with-sidebar">
             {{#if showProcedureSection}}

@@ -79,6 +79,7 @@ import {notifier, notifierXHR} from '../../../plugins/utils/notifiers-utils';
 import Evidence from '../../../models/business-models/evidence';
 import * as businessModels from '../../../models/business-models';
 import {getAjaxErrorInfo} from '../../../plugins/utils/errors-utils';
+import '../../react-component/react-component';
 
 const SEMI_RESTRICTED_STATUSES = ['Deprecated', 'Completed'];
 
@@ -260,6 +261,7 @@ export default canComponent.extend({
       },
     },
     pubSub,
+    name: 'Yury',
     _verifierRoleId: undefined,
     isUpdatingRelatedItems: false,
     isUpdatingState: false,
@@ -289,9 +291,9 @@ export default canComponent.extend({
       this.onStateChange({state: 'In Progress', undo: false});
     },
     isReadOnlyAttribute: function (propName) {
-      const readOnlyAttributes = this.attr('instance._readonly_fields');
+      const readOnlyAttributes = this.attr('instance._readonly_fields').attr();
       const isEditDenied = this.attr('isEditDenied');
-      const isReadOnly = [...readOnlyAttributes].includes(propName);
+      const isReadOnly = readOnlyAttributes.includes(propName);
       return isReadOnly || isEditDenied;
     },
     getQuery: function (type, sortObj, additionalFilter) {
