@@ -1,0 +1,36 @@
+.table-container {
+  max-width: 40em;
+  max-height: 20em;
+  overflow: scroll;
+  position: relative;
+}
+
+.grid-container {
+  position: relative;
+  border-collapse: collapse;
+  table-layout: fixed; /* in order to set the custom width of each column */
+}
+
+.grid-container td,
+.grid-container th {
+  padding: 15px;
+}
+
+.grid-container thead th {
+  position: sticky;
+  top: 0;
+  background: #000;
+  color: #FFF;
+}
+
+.grid-container thead th:first-child {
+  left: 0;
+  z-index: 1;
+}
+
+.grid-container tbody th {
+  position: sticky;
+  left: 0;
+  background: #FFF;
+  border-right: 1px solid #CCC;
+}
