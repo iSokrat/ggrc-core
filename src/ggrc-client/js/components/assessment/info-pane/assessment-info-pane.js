@@ -45,6 +45,7 @@ import './assessment-inline-item';
 import './create-url';
 import './confirm-edit-action';
 import '../../multi-select-label/multi-select-label';
+import '../../modals/delete-modal/delete-modal';
 import {
   buildParam,
   batchRequestsWithPromise as batchRequests,

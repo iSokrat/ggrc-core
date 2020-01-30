@@ -14,6 +14,7 @@ import '../assessment/assessment-mapped-objects/assessment-mapped-objects';
 import '../assessment/assessment-evidence-objects/assessment-evidence-objects';
 import '../assessment/assessment-mapped-comments/assessment-mapped-comments';
 import './mapper-results-item-description';
+import '../modals/delete-modal/delete-modal';
 import template from './templates/mapper-results-item-details.stache';
 import * as businessModels from '../../models/business-models';
 

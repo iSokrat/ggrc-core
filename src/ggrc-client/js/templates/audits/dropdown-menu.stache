@@ -108,14 +108,16 @@
   {{^if instance.archived}}
     {{#is_allowed 'delete' instance}}
         <li>
-          <a data-toggle="modal-ajax-deleteform"
-             data-object-plural="{{model.table_plural}}"
-             data-object-singular="{{model.model_singular}}"
-             data-modal-reset="reset" data-modal-class="modal"
-             data-object-id="{{instance.id}}" href="javascript://">
-            <i class="fa fa-trash"></i>
-            Delete
-          </a>
+          <delete-modal>
+            <a
+              data-object-plural="{{model.table_plural}}"
+              data-object-singular="{{model.model_singular}}"
+              data-object-id="{{instance.id}}" href="javascript://"
+              on:el:click="onConfirm(scope.element)">
+              <i class="fa fa-trash"></i>
+              Delete
+            </a>
+          </delete-modal>
         </li>
     {{/is_allowed}}
   {{/if}}

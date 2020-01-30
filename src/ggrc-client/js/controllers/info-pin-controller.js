@@ -38,6 +38,7 @@ import '../components/general-page-header/general-page-header';
 import '../components/evidence-item/evidence-item';
 import '../components/inline/inline-form-control';
 import '../components/inline/inline-edit-control';
+import '../components/modals/delete-modal/delete-modal';
 import * as TreeViewUtils from '../plugins/utils/tree-view-utils';
 import {confirm} from '../plugins/utils/modals';
 import {getInstanceView} from '../plugins/utils/object-history-utils';

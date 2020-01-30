@@ -58,6 +58,8 @@ import '../../components/evidence-item/evidence-item';
 import '../../components/inline/inline-form-control';
 import '../../components/inline/inline-edit-control';
 import '../../components/modal-container/modal-container';
+import '../../components/modals/delete-modal/delete-modal';
+
 import {
   bindXHRToButton,
   bindXHRToDisableElement,

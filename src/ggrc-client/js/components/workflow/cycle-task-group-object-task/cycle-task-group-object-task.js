@@ -11,6 +11,7 @@ import tdmTemplate from './templates/partials/three-dots-menu.stache';
 import tdmInHistoryTemplate from './templates/partials/three-dots-menu-in-history.stache';
 import restoreButtonTemplate from './templates/partials/restore-button.stache';
 
+import '../../modals/delete-modal/delete-modal';
 import '../../object-change-state/object-change-state';
 import '../../dropdown/dropdown-component';
 import '../../comment/comment-data-provider';

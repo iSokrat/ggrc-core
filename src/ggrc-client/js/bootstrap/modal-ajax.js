@@ -7,26 +7,20 @@ import loIsEmpty from 'lodash/isEmpty';
 import loForEach from 'lodash/forEach';
 import loFind from 'lodash/find';
 import Spinner from 'spin.js';
-import {warning} from '../plugins/utils/modals';
 import {
   BUTTON_VIEW_SAVE_CANCEL_DELETE,
   BUTTON_CREATE_PROPOSAL,
   ASSESSMENT_TEMPLATE_FOOTER,
 } from '../plugins/utils/template-utils';
-import {
-  hasWarningType,
-  shouldApplyPreconditions,
-} from '../plugins/utils/controllers';
+import {shouldApplyPreconditions} from '../plugins/utils/controllers';
 import {refreshPermissions} from '../permission';
 import {
   getPageInstance,
   navigate,
 } from '../plugins/utils/current-page-utils';
 import modalModels from '../models/modal-models';
-import {changeUrl} from '../router';
 import ModalsController from '../controllers/modals/modals-controller';
 import ArchiveModalControl from '../controllers/modals/archive-modal-controller';
-import DeleteModalControl from '../controllers/modals/delete-modal-controller';
 
 let originalModalShow = $.fn.modal.Constructor.prototype.show;
 let originalModalHide = $.fn.modal.Constructor.prototype.hide;
@@ -46,67 +40,6 @@ const getButtonView = (modelName, isProposal) => {
 let handlers = {
   modal: function ($target, $trigger, option) {
     $target.modal(option).draggable({handle: '.modal-header'});
-  },
-
-  deleteform: function ($target, $trigger, option) {
-    let model = modalModels[$trigger.attr('data-object-singular')];
-    let instance;
-    let modalSettings;
-
-    if ($trigger.attr('data-object-id') === 'page') {
-      instance = getPageInstance();
-    } else {
-      instance = model.findInCacheById($trigger.attr('data-object-id'));
-    }
-
-    modalSettings = {
-      $trigger: $trigger,
-      skip_refresh: true,
-      new_object_form: false,
-      button_view:
-        '/modals/delete-cancel-buttons.stache',
-      model: model,
-      instance: instance,
-      modal_title: 'Delete ' + $trigger.attr('data-object-singular'),
-      content_view:
-        '/base_objects/confirm-delete.stache',
-    };
-
-    if (hasWarningType(instance)) {
-      modalSettings = Object.assign(
-        modalSettings,
-        warning.settings,
-        {
-          objectShortInfo: [instance.type, instance.title].join(' '),
-          confirmOperationName: 'delete',
-          operation: 'deletion',
-        }
-      );
-    }
-
-    $target.modal_form(option, $trigger);
-
-    warning(
-      modalSettings,
-      () => ({}),
-      () => ({}), {
-        controller: DeleteModalControl,
-        target: $target,
-      });
-
-    $target.on('modal:success', function (e, data) {
-      let modelName = $trigger.attr('data-object-plural').toLowerCase();
-      if ($trigger.attr('data-object-id') === 'page' ||
-        (instance === getPageInstance())) {
-        navigate('/dashboard');
-      } else if (modelName === 'people' || modelName === 'roles') {
-        changeUrl('/admin#' + modelName + '_list');
-        navigate();
-      } else {
-        $trigger.trigger('modal:success', data);
-        $target.modal_form('hide');
-      }
-    });
   },
 
   form: function ($target, $trigger, option) {
@@ -573,7 +506,6 @@ $(function () {
   loForEach({
     '': handlers.modal,
     form: handlers.form,
-    deleteform: handlers.deleteform,
     archiveform: handlers.archiveform,
   },
   function (launchFn, toggle) {
