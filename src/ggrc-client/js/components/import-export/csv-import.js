@@ -8,7 +8,6 @@ import loMap from 'lodash/map';
 import canStache from 'can-stache';
 import canMap from 'can-map';
 import canComponent from 'can-component';
-import '../../plugins/utils/controllers';
 import {
   jobStatuses,
   isStoppedJob,

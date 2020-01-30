@@ -5,8 +5,6 @@
 
 import canDefineMap from 'can-define/map/map';
 import canComponent from 'can-component';
-import {warning} from '../../../plugins/utils/modals';
-import {hasWarningType} from '../../../plugins/utils/controllers';
 import {changeUrl} from '../../../router';
 import modalModels from '../../../models/modal-models';
 import {
@@ -26,7 +24,6 @@ const ViewModel = canDefineMap.extend({
 
     let model = modalModels[$trigger.attr('data-object-singular')];
     let instance;
-    let modalSettings;
 
     if ($trigger.attr('data-object-id') === 'page') {
       instance = getPageInstance();
@@ -34,7 +31,9 @@ const ViewModel = canDefineMap.extend({
       instance = model.findInCacheById($trigger.attr('data-object-id'));
     }
 
-    modalSettings = {
+    $target.modal_form(option, $trigger);
+
+    new DeleteModalControl($target, {
       $trigger: $trigger,
       skip_refresh: true,
       new_object_form: false,
@@ -45,29 +44,7 @@ const ViewModel = canDefineMap.extend({
       modal_title: 'Delete ' + $trigger.attr('data-object-singular'),
       content_view:
         '/base_objects/confirm-delete.stache',
-    };
-
-    if (hasWarningType(instance)) {
-      modalSettings = Object.assign(
-        modalSettings,
-        warning.settings,
-        {
-          objectShortInfo: [instance.type, instance.title].join(' '),
-          confirmOperationName: 'delete',
-          operation: 'deletion',
-        }
-      );
-    }
-
-    $target.modal_form(option, $trigger);
-
-    warning(
-      modalSettings,
-      () => ({}),
-      () => ({}), {
-        controller: DeleteModalControl,
-        target: $target,
-      });
+    });
 
     $target.on('modal:success', function (e, data) {
       let modelName = $trigger.attr('data-object-plural').toLowerCase();

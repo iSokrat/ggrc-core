@@ -12,14 +12,16 @@ import {
   BUTTON_CREATE_PROPOSAL,
   ASSESSMENT_TEMPLATE_FOOTER,
 } from '../plugins/utils/template-utils';
-import {shouldApplyPreconditions} from '../plugins/utils/controllers';
+// This should be imported before permission.js in order to resolve
+// cyclic dependencies. Potential cyclic dependencies should be
+// fixed in more common way.
+import ModalsController from '../controllers/modals/modals-controller';
 import {refreshPermissions} from '../permission';
 import {
   getPageInstance,
   navigate,
 } from '../plugins/utils/current-page-utils';
 import modalModels from '../models/modal-models';
-import ModalsController from '../controllers/modals/modals-controller';
 import ArchiveModalControl from '../controllers/modals/archive-modal-controller';
 
 let originalModalShow = $.fn.modal.Constructor.prototype.show;
@@ -93,11 +95,6 @@ let handlers = {
       extendNewInstance,
       button_view: getButtonView(modelName, isProposal),
       model: model,
-      oldData: {
-        status: instance && instance.status, // status before changing
-      },
-      applyPreconditions:
-        shouldApplyPreconditions(instance),
       current_user: GGRC.current_user,
       instance: instance,
       skip_refresh: !needToRefresh,

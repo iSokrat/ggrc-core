@@ -66,10 +66,6 @@ import {
 } from '../../plugins/utils/modals';
 import {BUTTON_VIEW_DONE} from '../../plugins/utils/template-utils';
 import {
-  checkPreconditions,
-  becameDeprecated,
-} from '../../plugins/utils/controllers';
-import {
   notifierXHR,
 } from '../../plugins/utils/notifiers-utils';
 import Person from '../../models/business-models/person';
@@ -446,9 +442,6 @@ export default canControl.extend({
 
   ' submit-form': function (el, ev) {
     let options = this.options;
-    let instance = options.attr('instance');
-    let oldData = options.attr('oldData');
-    let applyPreconditions = options.attr('applyPreconditions');
     let saveInstance = function () {
       options.attr('add_more', false);
       this.triggerSave(el, ev);
@@ -458,24 +451,7 @@ export default canControl.extend({
       return;
     }
 
-    if (applyPreconditions) {
-      checkPreconditions({
-        instance: instance,
-        operation: 'deprecation',
-        // functions that will be called as an extra conditions (return true
-        // or false). If all conditions are passed then are showed a
-        // message else - called success handler.
-        extraConditions: [
-          becameDeprecated.bind(
-            null,
-            instance,
-            oldData.status,
-          ),
-        ],
-      }, saveInstance);
-    } else {
-      saveInstance();
-    }
+    saveInstance();
   },
 
   triggerSave(el) {
