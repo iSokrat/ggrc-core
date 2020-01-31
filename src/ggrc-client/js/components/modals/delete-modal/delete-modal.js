@@ -13,7 +13,7 @@ import {
 } from '../../../plugins/utils/current-page-utils';
 import pubSub from '../../../pub-sub';
 import {bindXHRToButton} from '../../../plugins/utils/modals';
-import {notifierXHR} from '../../../plugins/utils/notifiers-utils';
+import {notifierXHR, notifier} from '../../../plugins/utils/notifiers-utils';
 
 const ViewModel = canDefineMap.extend({
   async onConfirm(el) {
@@ -46,18 +46,6 @@ const ViewModel = canDefineMap.extend({
     });
 
     $target
-      .on('modal:success', function (e, data) {
-        let modelName = $trigger.attr('data-object-plural').toLowerCase();
-        if (instance === getPageInstance()) {
-          navigate('/dashboard');
-        } else if (modelName === 'people' || modelName === 'roles') {
-          changeUrl('/admin#' + modelName + '_list');
-          navigate();
-        } else {
-          $trigger.trigger('modal:success', data);
-          $target.modal_form('hide');
-        }
-      })
       .on('click', 'a.btn[data-toggle=delete]:not(:disabled)', (event) => {
         // Disable the cancel button.
         let cancelButton = $target.find('a[data-dismiss=modal]');
@@ -77,15 +65,26 @@ const ViewModel = canDefineMap.extend({
               // not refresh the instance post-delete.
               let parentController = $($trigger)
                 .closest('.modal').control();
-              let msg;
+
               if (parentController) {
+                // handled in modals-controller.js
                 parentController.options.skip_refresh = true;
               }
 
-              msg = instance.display_name() + ' deleted successfully';
-              $(document.body).trigger('ajax:flash', {success: msg});
+              const message =
+                `${instance.display_name()} deleted successfully`;
+              notifier('success', message);
 
-              $target.trigger('modal:success', instance);
+              let modelName = $trigger.attr('data-object-plural').toLowerCase();
+              if (instance === getPageInstance()) {
+                navigate('/dashboard');
+              } else if (modelName === 'people' || modelName === 'roles') {
+                changeUrl('/admin#' + modelName + '_list');
+                navigate();
+              } else {
+                $trigger.trigger('modal:success', instance);
+                $target.modal_form('hide');
+              }
 
               pubSub.dispatch({
                 type: 'objectDeleted',
