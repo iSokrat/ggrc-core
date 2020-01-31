@@ -22,13 +22,8 @@ const ViewModel = canDefineMap.extend({
     const option = $trigger.data();
 
     let model = modalModels[$trigger.attr('data-object-singular')];
-    let instance;
+    let instance = model.findInCacheById($trigger.attr('data-object-id'));
 
-    if ($trigger.attr('data-object-id') === 'page') {
-      instance = getPageInstance();
-    } else {
-      instance = model.findInCacheById($trigger.attr('data-object-id'));
-    }
 
     $target.modal_form(option, $trigger);
 
@@ -53,8 +48,7 @@ const ViewModel = canDefineMap.extend({
     $target
       .on('modal:success', function (e, data) {
         let modelName = $trigger.attr('data-object-plural').toLowerCase();
-        if ($trigger.attr('data-object-id') === 'page' ||
-          (instance === getPageInstance())) {
+        if (instance === getPageInstance()) {
           navigate('/dashboard');
         } else if (modelName === 'people' || modelName === 'roles') {
           changeUrl('/admin#' + modelName + '_list');

@@ -17,10 +17,7 @@ import {
 // fixed in more common way.
 import ModalsController from '../controllers/modals/modals-controller';
 import {refreshPermissions} from '../permission';
-import {
-  getPageInstance,
-  navigate,
-} from '../plugins/utils/current-page-utils';
+import {navigate} from '../plugins/utils/current-page-utils';
 import modalModels from '../models/modal-models';
 import ArchiveModalControl from '../controllers/modals/archive-modal-controller';
 
@@ -54,16 +51,11 @@ let handlers = {
     let extendNewInstance = $trigger.attr('data-extend-new-instance');
     let model = modalModels[$trigger.attr('data-object-singular')];
     let isProposal = $trigger.data('is-proposal');
-    let instance;
     let modalTitle;
     let contentView;
     const modelName = $trigger.attr('data-object-singular');
+    const instance = model.findInCacheById($trigger.attr('data-object-id'));
 
-    if ($trigger.attr('data-object-id') === 'page') {
-      instance = getPageInstance();
-    } else {
-      instance = model.findInCacheById($trigger.attr('data-object-id'));
-    }
     const isNewInstance = !instance;
 
     objectParams = objectParams ? JSON.parse(objectParams) : {};
@@ -160,13 +152,7 @@ let handlers = {
 
   archiveform: function ($target, $trigger, option) {
     let model = modalModels[$trigger.attr('data-object-singular')];
-    let instance;
-
-    if ($trigger.attr('data-object-id') === 'page') {
-      instance = getPageInstance();
-    } else {
-      instance = model.findInCacheById($trigger.attr('data-object-id'));
-    }
+    let instance = model.findInCacheById($trigger.attr('data-object-id'));
 
     $target
       .modal_form(option, $trigger);
