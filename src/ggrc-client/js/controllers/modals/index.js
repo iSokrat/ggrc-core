@@ -5,5 +5,4 @@
 
 import './modals-controller';
 import './archive-modal-controller';
-import './delete-modal-controller';
 import './gapi-modal';

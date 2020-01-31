@@ -11,13 +11,12 @@ import {
   getPageInstance,
   navigate,
 } from '../../../plugins/utils/current-page-utils';
+import pubSub from '../../../pub-sub';
+import {bindXHRToButton} from '../../../plugins/utils/modals';
+import {notifierXHR} from '../../../plugins/utils/notifiers-utils';
 
 const ViewModel = canDefineMap.extend({
   async onConfirm(el) {
-    const {'default': DeleteModalControl} = await import(
-      /* webpackChunkName: "modalsDeleteCtrls" */
-      '../../../controllers/modals/delete-modal-controller'
-    );
     const $trigger = $(el);
     const $target = $('<div class="modal hide"></div>');
     const option = $trigger.data();
@@ -33,7 +32,12 @@ const ViewModel = canDefineMap.extend({
 
     $target.modal_form(option, $trigger);
 
-    new DeleteModalControl($target, {
+    const {'default': ModalsController} = await import(
+      /* webpackChunkName: "modalsCtrls" */
+      '../../../controllers/modals/modals-controller'
+    );
+
+    new ModalsController($target, {
       $trigger: $trigger,
       skip_refresh: true,
       new_object_form: false,
@@ -46,19 +50,62 @@ const ViewModel = canDefineMap.extend({
         '/base_objects/confirm-delete.stache',
     });
 
-    $target.on('modal:success', function (e, data) {
-      let modelName = $trigger.attr('data-object-plural').toLowerCase();
-      if ($trigger.attr('data-object-id') === 'page' ||
-        (instance === getPageInstance())) {
-        navigate('/dashboard');
-      } else if (modelName === 'people' || modelName === 'roles') {
-        changeUrl('/admin#' + modelName + '_list');
-        navigate();
-      } else {
-        $trigger.trigger('modal:success', data);
-        $target.modal_form('hide');
-      }
-    });
+    $target
+      .on('modal:success', function (e, data) {
+        let modelName = $trigger.attr('data-object-plural').toLowerCase();
+        if ($trigger.attr('data-object-id') === 'page' ||
+          (instance === getPageInstance())) {
+          navigate('/dashboard');
+        } else if (modelName === 'people' || modelName === 'roles') {
+          changeUrl('/admin#' + modelName + '_list');
+          navigate();
+        } else {
+          $trigger.trigger('modal:success', data);
+          $target.modal_form('hide');
+        }
+      })
+      .on('click', 'a.btn[data-toggle=delete]:not(:disabled)', (event) => {
+        // Disable the cancel button.
+        let cancelButton = $target.find('a[data-dismiss=modal]');
+        let modalBackdrop = $target.data('modal_form').$backdrop;
+
+        const promise = new Promise((resolve, reject) => {
+          instance.refresh()
+            .then(resolve)
+            .catch(reject);
+        });
+
+        bindXHRToButton(
+          promise
+            .then((instance) => instance.destroy())
+            .then((instance) => {
+              // If this modal is spawned from an edit modal, make sure that one does
+              // not refresh the instance post-delete.
+              let parentController = $($trigger)
+                .closest('.modal').control();
+              let msg;
+              if (parentController) {
+                parentController.options.skip_refresh = true;
+              }
+
+              msg = instance.display_name() + ' deleted successfully';
+              $(document.body).trigger('ajax:flash', {success: msg});
+
+              $target.trigger('modal:success', instance);
+
+              pubSub.dispatch({
+                type: 'objectDeleted',
+                instance,
+              });
+
+              return new Promise(() => {}); // on success, just let the modal be destroyed or navigation happen.
+              // Do not re-enable the form elements.
+            }).catch((xhr) => {
+              notifierXHR('error', xhr);
+            }),
+          $(event.target).add(cancelButton).add(modalBackdrop)
+        );
+      });
   },
 });
 
