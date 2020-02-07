@@ -5,6 +5,7 @@
 
 import canDefineMap from 'can-define/map/map';
 import canComponent from 'can-component';
+import canStache from 'can-stache';
 import {changeUrl} from '../../../router';
 import {
   getPageInstance,
@@ -13,42 +14,33 @@ import {
 import pubSub from '../../../pub-sub';
 import {bindXHRToButton} from '../../../plugins/utils/modals';
 import {notifierXHR, notifier} from '../../../plugins/utils/notifiers-utils';
+import modalTemplate from './templates/modal-template.stache';
 
 const ViewModel = canDefineMap.extend({
   instance: {
     value: null,
   },
   async onConfirm(el) {
-    const $trigger = $(el);
-    const $target = $('<div class="modal hide"></div>');
-
-    $target.modal_form(null, $trigger);
-
-    const {'default': ModalsController} = await import(
-      /* webpackChunkName: "modalsCtrls" */
-      '../../../controllers/modals/modals-controller'
-    );
-
     const instance = this.instance;
-    const modelName = instance.constructor.model_singular;
-
-    new ModalsController($target, {
-      $trigger,
-      skip_refresh: true,
-      new_object_form: false,
-      button_view:
-        '/modals/delete-cancel-buttons.stache',
-      instance,
-      modal_title: `Delete ${modelName}`,
-      content_view:
-        '/base_objects/confirm-delete.stache',
+    const displayName = instance.display_name();
+    const modalFragment = canStache(modalTemplate)({
+      modalTitle: `Delete ${instance.constructor.model_singular}`,
+      objectType: instance.attr('type'),
+      displayName,
     });
+
+    const $target = $('<div class="modal hide"></div>')
+      .html(modalFragment);
+
+    $target
+      .modal()
+      .draggable({handle: '.modal-header'});
 
     $target
       .on('click', 'a.btn[data-toggle=delete]:not(:disabled)', (event) => {
         // Disable the cancel button.
         let cancelButton = $target.find('a[data-dismiss=modal]');
-        let modalBackdrop = $target.data('modal_form').$backdrop;
+        let modalBackdrop = $target.data('modal').$backdrop;
 
         const promise = new Promise((resolve, reject) => {
           instance.refresh()
@@ -60,9 +52,11 @@ const ViewModel = canDefineMap.extend({
           promise
             .then((instance) => instance.destroy())
             .then((instance) => {
+              const $trigger = $(el);
+
               // If this modal is spawned from an edit modal, make sure that one does
               // not refresh the instance post-delete.
-              let parentController = $($trigger)
+              let parentController = $trigger
                 .closest('.modal').control();
 
               if (parentController) {
@@ -85,7 +79,7 @@ const ViewModel = canDefineMap.extend({
                 navigate();
               } else {
                 $trigger.trigger('modal:success', instance);
-                $target.modal_form('hide');
+                $target.modal('hide');
               }
 
               pubSub.dispatch({
