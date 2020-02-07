@@ -8,14 +8,11 @@
       <div class="deny-buttons">
         {{^new_object_form}}
           {{#is_allowed 'delete' instance context='for'}}
-            <delete-modal>
+            <delete-modal instance:from="instance">
               <a
                 tabindex="37"
                 class="btn btn-small btn-red"
                 data-toggle="modal-ajax-deleteform"
-                data-object-plural="{{model.table_plural}}"
-                data-object-singular="{{model.model_singular}}"
-                data-object-id="{{instance.id}}"
                 href="javascript://"
                 on:el:click="onConfirm(scope.element)">Delete</a>
             </delete-modal>

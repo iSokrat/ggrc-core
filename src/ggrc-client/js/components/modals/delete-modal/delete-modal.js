@@ -6,7 +6,6 @@
 import canDefineMap from 'can-define/map/map';
 import canComponent from 'can-component';
 import {changeUrl} from '../../../router';
-import modalModels from '../../../models/modal-models';
 import {
   getPageInstance,
   navigate,
@@ -16,31 +15,31 @@ import {bindXHRToButton} from '../../../plugins/utils/modals';
 import {notifierXHR, notifier} from '../../../plugins/utils/notifiers-utils';
 
 const ViewModel = canDefineMap.extend({
+  instance: {
+    value: null,
+  },
   async onConfirm(el) {
     const $trigger = $(el);
     const $target = $('<div class="modal hide"></div>');
-    const option = $trigger.data();
 
-    let model = modalModels[$trigger.attr('data-object-singular')];
-    let instance = model.findInCacheById($trigger.attr('data-object-id'));
-
-
-    $target.modal_form(option, $trigger);
+    $target.modal_form(null, $trigger);
 
     const {'default': ModalsController} = await import(
       /* webpackChunkName: "modalsCtrls" */
       '../../../controllers/modals/modals-controller'
     );
 
+    const instance = this.instance;
+    const modelName = instance.constructor.model_singular;
+
     new ModalsController($target, {
-      $trigger: $trigger,
+      $trigger,
       skip_refresh: true,
       new_object_form: false,
       button_view:
         '/modals/delete-cancel-buttons.stache',
-      model: model,
-      instance: instance,
-      modal_title: 'Delete ' + $trigger.attr('data-object-singular'),
+      instance,
+      modal_title: `Delete ${modelName}`,
       content_view:
         '/base_objects/confirm-delete.stache',
     });
@@ -75,11 +74,14 @@ const ViewModel = canDefineMap.extend({
                 `${instance.display_name()} deleted successfully`;
               notifier('success', message);
 
-              let modelName = $trigger.attr('data-object-plural').toLowerCase();
+              const modelNamePlural = instance.constructor.table_plural;
               if (instance === getPageInstance()) {
                 navigate('/dashboard');
-              } else if (modelName === 'people' || modelName === 'roles') {
-                changeUrl('/admin#' + modelName + '_list');
+              } else if (
+                modelNamePlural === 'people' ||
+                modelNamePlural === 'roles'
+              ) {
+                changeUrl(`/admin#${modelNamePlural}_list`);
                 navigate();
               } else {
                 $trigger.trigger('modal:success', instance);

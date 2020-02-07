@@ -153,11 +153,8 @@ Copyright (C) 2020 Google Inc.
           {{#is_allowed 'delete' instance}}
             {{^is_edit_denied instance}}
               <li>
-                <delete-modal>
+                <delete-modal instance:from="instance">
                   <a
-                    data-object-plural="{{model.table_plural}}"
-                    data-object-singular="{{model.model_singular}}"
-                    data-object-id="{{instance.id}}"
                     href="javascript://"
                     on:el:click="onConfirm(scope.element)">
                     <i class="fa fa-trash"></i>
