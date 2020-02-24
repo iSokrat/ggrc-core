@@ -6,7 +6,6 @@
 import {exists, filteredMap, getView} from '../../plugins/ggrc-utils';
 import loIsFunction from 'lodash/isFunction';
 import loForEach from 'lodash/forEach';
-import loFilter from 'lodash/filter';
 import canModel from 'can-model';
 import canStache from 'can-stache';
 import canList from 'can-list';
@@ -604,14 +603,11 @@ export default canControl.extend({
     });
   },
 
-  '{instance} destroyed': ' hide',
-
   ' hide': function (el, ev) {
     if (this.wasDestroyed()) {
       return;
     }
 
-    let cad;
     const instance = this.options.instance;
     if (this.disable_hide) {
       ev.stopImmediatePropagation();
@@ -623,13 +619,6 @@ export default canControl.extend({
       // Ensure that this modal was hidden and not a child modal
       this.element && ev.target === this.element[0] &&
       !this.options.skip_refresh && !instance.isNew()) {
-      if (instance.type === 'AssessmentTemplate') {
-        cad = instance.attr('custom_attribute_definitions');
-        cad = loFilter(cad, function (attr) {
-          return attr.id;
-        });
-        instance.attr('custom_attribute_definitions', cad);
-      }
       instance.notifier.onEmpty(() => {
         instance.refresh();
       });

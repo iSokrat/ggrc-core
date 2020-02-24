@@ -10,7 +10,6 @@ import loIsFunction from 'lodash/isFunction';
 import loForEach from 'lodash/forEach';
 import {confirm} from '../plugins/utils/modals';
 import {hasPending as hasPendingUtil} from '../plugins/ggrc-utils';
-import {navigate} from '../plugins/utils/current-page-utils';
 import {changeUrl} from '../router';
 import {trigger} from 'can-event';
 
@@ -55,7 +54,6 @@ $.extend(ModalForm.prototype, {
         $.proxy(this.submit, this))
       .on('shown.modal-form', $.proxy(this.focus_first_input, this))
       .on('loaded.modal-form', $.proxy(this.focus_first_input, this))
-      .on('delete-object', $.proxy(this.delete_object, this))
       .draggable({
         handle: '.modal-header',
         cancel: '.btn',
@@ -71,27 +69,6 @@ $.extend(ModalForm.prototype, {
     e.stopImmediatePropagation();
     e.stopPropagation();
     e.preventDefault();
-  },
-  delete_object: function (e, data, xhr) {
-    // If this modal is contained within another modal, pass the event onward
-    let $triggerModal = this.$trigger.closest('.modal');
-    let deleteTarget;
-
-    if ($triggerModal.length > 0) {
-      $triggerModal.trigger('delete-object', [data, xhr]);
-    } else {
-      deleteTarget = this.$trigger.data('delete-target');
-      if (deleteTarget === 'refresh') {
-        // Refresh the page
-        navigate(window.location.href.replace(/#.*/, ''));
-      } else if (xhr && xhr.getResponseHeader('location')) {
-        // Otherwise redirect if possible
-        navigate(xhr.getResponseHeader('location'));
-      } else {
-        // Otherwise refresh the page
-        navigate(window.location.href.replace(/#.*/, ''));
-      }
-    }
   },
   $form: function () {
     return this.$element.find('form').first();
